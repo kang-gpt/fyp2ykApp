@@ -1,0 +1,25 @@
+{
+  "ykApp": {
+    "court": {
+      "home": {
+        "title": "Courts",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Court",
+        "createOrEditLabel": "Create or edit a Court",
+        "notFound": "No Courts found"
+      },
+      "created": "A new Court is created with identifier {{ param }}",
+      "updated": "A Court is updated with identifier {{ param }}",
+      "deleted": "A Court is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Court {{ id }}?"
+      },
+      "detail": {
+        "title": "Court"
+      },
+      "id": "ID",
+      "name": "Name",
+      "sport": "Sport"
+    }
+  }
+}

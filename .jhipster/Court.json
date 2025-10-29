@@ -1,0 +1,30 @@
+{
+  "annotations": {},
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "Court",
+  "relationships": [
+    {
+      "otherEntityName": "timeSlot",
+      "otherEntityRelationshipName": "court",
+      "relationshipName": "timeSlot",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "sport",
+      "otherEntityRelationshipName": "court",
+      "relationshipName": "sport",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "serviceClass"
+}

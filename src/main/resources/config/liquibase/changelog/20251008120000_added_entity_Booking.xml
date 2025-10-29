@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Added the entity Booking.
+    -->
+    <changeSet id="20251008120000-1" author="jhipster">
+        <createTable tableName="booking">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="start_time" type="datetime">
+                <constraints nullable="true" />
+            </column>
+            <column name="end_time" type="datetime">
+                <constraints nullable="true" />
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <column name="court_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
+        </createTable>
+        <dropDefaultValue tableName="booking" columnName="start_time" columnDataType="datetime"/>
+        <dropDefaultValue tableName="booking" columnName="end_time" columnDataType="datetime"/>
+    </changeSet>
+
+    <changeSet id="20251008120000-2" author="jhipster">
+        <addForeignKeyConstraint baseColumnNames="user_id" 
+                                 baseTableName="booking" 
+                                 constraintName="fk_booking__user_id" 
+                                 referencedColumnNames="id" 
+                                 referencedTableName="jhi_user"/>
+
+        <addForeignKeyConstraint baseColumnNames="court_id" 
+                                 baseTableName="booking" 
+                                 constraintName="fk_booking__court_id" 
+                                 referencedColumnNames="id" 
+                                 referencedTableName="court"/>
+    </changeSet>
+</databaseChangeLog>

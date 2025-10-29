@@ -1,0 +1,23 @@
+{
+  "annotations": {},
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "Sport",
+  "relationships": [
+    {
+      "otherEntityName": "court",
+      "otherEntityRelationshipName": "sport",
+      "relationshipName": "court",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "service": "serviceClass"
+}

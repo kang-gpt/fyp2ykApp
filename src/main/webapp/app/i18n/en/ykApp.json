@@ -1,0 +1,87 @@
+{
+  "ykApp": {
+    "application": {
+      "name": "Court Booking System",
+      "description": "Book sports courts easily"
+    },
+    "bookingFlow": {
+      "step1": {
+        "title": "Select Sport",
+        "description": "Choose the sport you want to play",
+        "button": "Continue to Courts"
+      },
+      "step2": {
+        "title": "Select Court",
+        "description": "Choose an available court",
+        "button": "Continue to Time Slots"
+      },
+      "step3": {
+        "title": "Select Time Slot",
+        "description": "Choose your preferred time",
+        "button": "Continue to Payment"
+      },
+      "step4": {
+        "title": "Payment",
+        "description": "Complete your booking",
+        "button": "Confirm Booking"
+      },
+      "step5": {
+        "title": "Confirmation",
+        "description": "Your booking is confirmed!",
+        "button": "View My Bookings"
+      }
+    },
+    "sport": {
+      "title": "Sports",
+      "selectSport": "Select a Sport",
+      "noSportsAvailable": "No sports available"
+    },
+    "court": {
+      "title": "Courts",
+      "selectCourt": "Select a Court",
+      "noCourtsAvailable": "No courts available for this sport",
+      "location": "Location",
+      "pricePerHour": "Price per Hour"
+    },
+    "timeslot": {
+      "title": "Time Slots",
+      "selectTimeslot": "Select a Time Slot",
+      "noTimeslotsAvailable": "No time slots available",
+      "available": "Available",
+      "booked": "Booked",
+      "startTime": "Start Time",
+      "endTime": "End Time"
+    },
+    "payment": {
+      "title": "Payment",
+      "amount": "Amount",
+      "paymentMethod": "Payment Method",
+      "creditCard": "Credit Card",
+      "debitCard": "Debit Card",
+      "cash": "Cash",
+      "processing": "Processing payment...",
+      "success": "Payment successful!",
+      "failed": "Payment failed. Please try again."
+    },
+    "booking": {
+      "confirmation": "Booking Confirmation",
+      "bookingId": "Booking ID",
+      "summary": "Booking Summary",
+      "sport": "Sport",
+      "court": "Court",
+      "date": "Date",
+      "time": "Time",
+      "total": "Total",
+      "status": "Status",
+      "confirmed": "Confirmed",
+      "pending": "Pending",
+      "cancelled": "Cancelled"
+    },
+    "navigation": {
+      "back": "Back",
+      "next": "Next",
+      "cancel": "Cancel",
+      "home": "Home"
+    }
+  }
+}

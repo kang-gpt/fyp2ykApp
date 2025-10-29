@@ -1,0 +1,11 @@
+{
+  "ykApp": {
+    "ClientTier": {
+      "null": "",
+      "PLATINUM": "PLATINUM",
+      "GOLD": "GOLD",
+      "IRON": "IRON",
+      "LEAD": "LEAD"
+    }
+  }
+}

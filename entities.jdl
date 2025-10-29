@@ -1,0 +1,56 @@
+entity Sport {
+  name String required
+}
+
+entity Court {
+  name String required
+}
+
+entity TimeSlot {
+  startTime Instant required
+  endTime Instant required
+}
+
+entity Booking {
+  bookingDate Instant required
+}
+
+entity ClientTier {
+  tierName String required
+  discountPercentage BigDecimal
+}
+
+entity Payment {
+  amount BigDecimal required
+  paymentDate Instant
+  status String required
+  qrCodeUrl String
+  transactionId String
+}
+
+relationship OneToMany {
+  Sport{court} to Court{sport}
+}
+
+relationship OneToMany {
+  Court{timeSlot} to TimeSlot{court}
+}
+
+relationship OneToOne {
+  TimeSlot{booking} to Booking{timeSlot}
+}
+
+relationship ManyToOne {
+  Client{clientTier} to ClientTier
+}
+
+relationship OneToOne {
+  Booking{payment} to Payment{booking}
+}
+
+relationship ManyToOne {
+  Payment{user} to User
+}
+
+dto * with mapstruct
+service * with serviceClass

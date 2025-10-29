@@ -1,0 +1,26 @@
+.client-tier-badge {
+  padding: 0.25em 0.6em;
+  font-size: 0.8em;
+  font-weight: 600;
+  border-radius: 0.25rem;
+}
+
+.client-tier-PLATINUM {
+  background-color: var(--bs-gray-200);
+  color: var(--bs-dark);
+}
+
+.client-tier-GOLD {
+  background-color: var(--bs-gray-400);
+  color: var(--bs-dark);
+}
+
+.client-tier-IRON {
+  background-color: var(--bs-gray-600);
+  color: var(--bs-light);
+}
+
+.client-tier-LEAD {
+  background-color: var(--bs-gray-800);
+  color: var(--bs-light);
+}
