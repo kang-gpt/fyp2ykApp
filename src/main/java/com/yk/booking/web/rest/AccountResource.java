@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class AccountResource {
 
+    //commitedwd n
     private static class AccountResourceException extends RuntimeException {
 
         private AccountResourceException(String message) {
