@@ -49,7 +49,7 @@ export const Home = () => {
       </div>
       <Row className="sports-section">
         <Col md="3">
-          <Link to="/court?sport=pickleball" style={{ textDecoration: 'none' }}>
+          <Link to="/court?sport=1" style={{ textDecoration: 'none' }}>
             <Card className="sport-card">
               <img src="content/images/pickleball.jpg" alt="Pickleball" className="sport-image" />
               <CardTitle tag="h5" className="sport-name">
@@ -59,7 +59,7 @@ export const Home = () => {
           </Link>
         </Col>
         <Col md="3">
-          <Link to="/court?sport=badminton" style={{ textDecoration: 'none' }}>
+          <Link to="/court?sport=2" style={{ textDecoration: 'none' }}>
             <Card className="sport-card">
               <img src="content/images/badminton.jpg" alt="Badminton" className="sport-image" />
               <CardTitle tag="h5" className="sport-name">
@@ -69,7 +69,7 @@ export const Home = () => {
           </Link>
         </Col>
         <Col md="3">
-          <Link to="/court?sport=basketball" style={{ textDecoration: 'none' }}>
+          <Link to="/court?sport=3" style={{ textDecoration: 'none' }}>
             <Card className="sport-card">
               <img src="content/images/basketball.jpg" alt="Basketball" className="sport-image" />
               <CardTitle tag="h5" className="sport-name">
@@ -79,7 +79,7 @@ export const Home = () => {
           </Link>
         </Col>
         <Col md="3">
-          <Link to="/court?sport=futsal" style={{ textDecoration: 'none' }}>
+          <Link to="/court?sport=4" style={{ textDecoration: 'none' }}>
             <Card className="sport-card">
               <img src="content/images/futsal.jpg" alt="Futsal" className="sport-image" />
               <CardTitle tag="h5" className="sport-name">

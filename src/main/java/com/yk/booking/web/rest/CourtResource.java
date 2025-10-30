@@ -97,18 +97,23 @@ public class CourtResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of courts in body.
      */
     @GetMapping("")
-    public List<Court> getAllCourts(@RequestParam(required = false) Optional<String> sportName) {
+    public List<Court> getAllCourts(@RequestParam(required = false) String sportName) {
         log.debug("REST request to get all Courts, with sportName: {}", sportName);
-        if (sportName.isPresent()) {
+        if (sportName != null && !sportName.isEmpty()) {
             List<Sport> allSports = sportRepository.findAll();
             log.debug("All sports in DB: {}", allSports);
-            Optional<Sport> foundSport = sportRepository.findByNameIgnoreCase(sportName.get());
+            Optional<Sport> foundSport = sportRepository.findByNameIgnoreCase(sportName);
             if (foundSport.isPresent()) {
                 List<Court> courtsBySport = courtRepository.findBySport(foundSport.get());
-                log.debug("Found sport {} with ID {} and {} courts.", foundSport.get().getName(), foundSport.get().getId(), courtsBySport.size());
+                log.debug(
+                    "Found sport {} with ID {} and {} courts.",
+                    foundSport.get().getName(),
+                    foundSport.get().getId(),
+                    courtsBySport.size()
+                );
                 return courtsBySport;
             } else {
-                log.debug("No Sport found for name: {}", sportName.get());
+                log.debug("No Sport found for name: {}", sportName);
                 return List.of();
             }
         } else {

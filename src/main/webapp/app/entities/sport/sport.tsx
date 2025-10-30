@@ -103,7 +103,7 @@ export const Sport = () => {
                   </td>
                   <td>
                     <Button color="link" onClick={() => navigate(`/sport/${sport.id}/courts`)}>
-                      {sport.sportName}
+                      {sport.name}
                     </Button>
                   </td>
                   <td className="text-end">

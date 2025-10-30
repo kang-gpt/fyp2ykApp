@@ -8,50 +8,35 @@ import { useAppDispatch } from 'app/config/store';
 
 export const SportCourts = () => {
   const { sportId } = useParams<{ sportId: string }>();
+
   const dispatch = useAppDispatch();
+
   const sportList = useAppSelector(state => state.sport.entities);
+
   const [sportName, setSportName] = useState('');
+
+  const [courts, setCourts] = useState([]);
 
   useEffect(() => {
     dispatch(getEntities({}));
+
+    fetch('content/data/courts.json')
+      .then(response => response.json())
+
+      .then(data => setCourts(data));
   }, [dispatch]);
 
   useEffect(() => {
     if (sportList && sportId) {
       const selectedSport = sportList.find(sport => sport.id === parseInt(sportId, 10));
+
       if (selectedSport) {
         setSportName(selectedSport.name);
       }
     }
   }, [sportList, sportId]);
 
-  const generateCourts = (name: string) => {
-    const courts = [];
-    let count = 0;
-    switch (name.toLowerCase()) {
-      case 'pickleball':
-        count = 8;
-        break;
-      case 'badminton':
-        count = 8;
-        break;
-      case 'basketball':
-        count = 4;
-        break;
-      case 'futsal':
-        count = 4;
-        break;
-      default:
-        return [];
-    }
-
-    for (let i = 1; i <= count; i++) {
-      courts.push(`${name} Court ${i}`);
-    }
-    return courts;
-  };
-
-  const courts = generateCourts(sportName);
+  const filteredCourts = courts.filter(court => court.sport.id === parseInt(sportId, 10));
 
   return (
     <div>
@@ -60,8 +45,9 @@ export const SportCourts = () => {
           Courts for {sportName}
         </Translate>
       </h2>
+
       <div className="table-responsive">
-        {courts && courts.length > 0 ? (
+        {filteredCourts && filteredCourts.length > 0 ? (
           <Table responsive>
             <thead>
               <tr>
@@ -70,10 +56,11 @@ export const SportCourts = () => {
                 </th>
               </tr>
             </thead>
+
             <tbody>
-              {courts.map((courtName, i) => (
+              {filteredCourts.map((court, i) => (
                 <tr key={`court-${i}`}>
-                  <td>{courtName}</td>
+                  <td>{court.name}</td>
                 </tr>
               ))}
             </tbody>
@@ -84,6 +71,7 @@ export const SportCourts = () => {
           </div>
         )}
       </div>
+
       <Button tag={Link} to="/sport" replace color="info" data-cy="entityDetailsBackButton">
         <Translate contentKey="entity.action.back">Back</Translate>
       </Button>

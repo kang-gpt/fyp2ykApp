@@ -8,7 +8,7 @@ import { ASC, DESC } from 'app/shared/util/pagination.constants';
 import { overrideSortStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getEntities } from './court.reducer';
-import { getEntities as getSports } from 'app/entities/sport/sport.reducer';
+import { getEntity as getSportEntity } from 'app/entities/sport/sport.reducer';
 
 export const Court = () => {
   const dispatch = useAppDispatch();
@@ -22,10 +22,12 @@ export const Court = () => {
 
   const courtList = useAppSelector(state => state.court.entities);
   const loading = useAppSelector(state => state.court.loading);
+  const sport = useAppSelector(state => state.sport.entity);
 
   useEffect(() => {
     if (selectedSport) {
-      dispatch(getEntities({ sort: `${sortState.sort},${sortState.order}`, sportName: selectedSport }));
+      dispatch(getSportEntity(selectedSport));
+      dispatch(getEntities({ sort: `${sortState.sort},${sortState.order}`, sportName: sport.name }));
     } else {
       dispatch(getEntities({ sort: `${sortState.sort},${sortState.order}` }));
     }
@@ -82,9 +84,6 @@ export const Court = () => {
           <Table responsive hover>
             <thead>
               <tr>
-                <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="ykApp.court.id">ID</Translate> <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
-                </th>
                 <th className="hand" onClick={sort('name')}>
                   <Translate contentKey="ykApp.court.name">Name</Translate> <FontAwesomeIcon icon={getSortIconByFieldName('name')} />
                 </th>
@@ -97,12 +96,11 @@ export const Court = () => {
             <tbody>
               {courtList.map((court, i) => (
                 <tr key={`entity-${i}`} data-cy="entityTable">
-                  <td>{court.id}</td>
                   <td>{court.name}</td>
                   <td>{court.sport ? court.sport.name : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`/court/${court.id}`} color="info" size="sm" data-cy="entityDetailsButton">
+                      <Button tag={Link} to={`/${sport.id}/court/${court.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                         <FontAwesomeIcon icon="eye" />{' '}
                         <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.view">View</Translate>
