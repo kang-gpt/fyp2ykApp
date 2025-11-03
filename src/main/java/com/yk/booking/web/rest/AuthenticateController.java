@@ -5,12 +5,16 @@ import static com.yk.booking.security.SecurityUtils.JWT_ALGORITHM;
 import static com.yk.booking.security.SecurityUtils.USER_ID_CLAIM;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yk.booking.domain.User;
+import com.yk.booking.repository.UserRepository;
 import com.yk.booking.security.DomainUserDetailsService.UserWithId;
+import com.yk.booking.service.MailService;
 import com.yk.booking.web.rest.vm.LoginVM;
 import jakarta.validation.Valid;
 import java.security.Principal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +43,8 @@ public class AuthenticateController {
     private static final Logger LOG = LoggerFactory.getLogger(AuthenticateController.class);
 
     private final JwtEncoder jwtEncoder;
+    private final MailService mailService;
+    private final UserRepository userRepository;
 
     @Value("${jhipster.security.authentication.jwt.token-validity-in-seconds:0}")
     private long tokenValidityInSeconds;
@@ -48,9 +54,16 @@ public class AuthenticateController {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    public AuthenticateController(JwtEncoder jwtEncoder, AuthenticationManagerBuilder authenticationManagerBuilder) {
+    public AuthenticateController(
+        JwtEncoder jwtEncoder,
+        AuthenticationManagerBuilder authenticationManagerBuilder,
+        MailService mailService,
+        UserRepository userRepository
+    ) {
         this.jwtEncoder = jwtEncoder;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.mailService = mailService;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/authenticate")
@@ -65,6 +78,16 @@ public class AuthenticateController {
         String jwt = this.createToken(authentication, loginVM.isRememberMe());
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setBearerAuth(jwt);
+
+        Optional<User> user = userRepository.findOneByLogin(authentication.getName());
+        if (user.isPresent()) {
+            User userToSend = new User();
+            userToSend.setLogin(user.get().getLogin());
+            userToSend.setEmail("0137019@student.uow.edu.my");
+            userToSend.setLangKey(user.get().getLangKey());
+            mailService.sendActivationEmail(userToSend);
+        }
+
         return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
     }
 

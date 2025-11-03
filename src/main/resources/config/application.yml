@@ -98,6 +98,17 @@ spring:
       enabled: false
       lifecycle-management: start-only
       file: src/main/docker/services.yml
+  mail:
+    host: smtp.sendgrid.net
+    port: 587
+    username: apikey
+    password: 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
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   profiles:
     # The commented value for `active` can be replaced with valid Spring profiles to load.
     # Otherwise, it will be filled in by maven when building the JAR file
@@ -199,7 +210,8 @@ jhipster:
   #   allow-credentials: true
   #   max-age: 1800
   mail:
-    from: yk@localhost
+    from: 0137019@student.uow.edu.my
+    base-url: http://localhost:8080
   api-docs:
     default-include-pattern: /api/**
     management-include-pattern: /management/**

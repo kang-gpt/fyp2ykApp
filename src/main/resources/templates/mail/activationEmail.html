@@ -1,20 +1,162 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" lang="en">
   <head>
-    <title th:text="#{email.activation.title}">JHipster activation</title>
+    <title th:text="#{email.activation.title}">Account Activation</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="icon" th:href="@{|${baseUrl}/favicon.ico|}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+      .email-container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .email-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 40px 30px;
+        text-align: center;
+        color: #ffffff;
+      }
+      .email-header h1 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 600;
+      }
+      .email-body {
+        padding: 40px 30px;
+      }
+      .greeting {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 20px;
+      }
+      .content-text {
+        font-size: 16px;
+        color: #555;
+        margin-bottom: 30px;
+        line-height: 1.8;
+      }
+      .button-container {
+        text-align: center;
+        margin: 35px 0;
+      }
+      .activate-button {
+        display: inline-block;
+        padding: 14px 40px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #ffffff !important;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: transform 0.2s;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+      .activate-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+      }
+      .divider {
+        border-top: 1px solid #e0e0e0;
+        margin: 30px 0;
+      }
+      .alternative-link {
+        font-size: 13px;
+        color: #777;
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        word-break: break-all;
+      }
+      .alternative-link-label {
+        font-weight: 600;
+        color: #555;
+        display: block;
+        margin-bottom: 8px;
+      }
+      .alternative-link a {
+        color: #667eea;
+        text-decoration: none;
+      }
+      .email-footer {
+        padding: 30px;
+        text-align: center;
+        background-color: #f8f9fa;
+        border-top: 1px solid #e0e0e0;
+      }
+      .footer-text {
+        font-size: 14px;
+        color: #666;
+        margin: 5px 0;
+      }
+      .signature {
+        font-size: 15px;
+        color: #667eea;
+        font-weight: 600;
+        margin-top: 10px;
+      }
+      .security-note {
+        font-size: 12px;
+        color: #999;
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #fff9e6;
+        border-left: 3px solid #ffc107;
+        border-radius: 4px;
+        text-align: left;
+      }
+    </style>
   </head>
   <body>
-    <p th:text="#{email.activation.greeting(${user.login})}">Dear</p>
-    <p th:text="#{email.activation.text1}">Your JHipster account has been created, please click on the URL below to activate it:</p>
-    <p>
-      <a th:with="url=(@{|${baseUrl}/account/activate?key=${user.activationKey}|})" th:href="${url}" th:text="${url}">Activation link</a>
-    </p>
-    <p>
-      <span th:text="#{email.activation.text2}">Regards, </span>
-      <br />
-      <em th:text="#{email.signature}">JHipster.</em>
-    </p>
+    <div class="email-container">
+      <div class="email-header">
+        <h1>Welcome to Yk App!</h1>
+      </div>
+
+      <div class="email-body">
+        <p class="greeting" th:text="#{email.activation.greeting(${user.login})}">Dear User,</p>
+
+        <p class="content-text" th:text="#{email.activation.text1}">
+          Your account has been created successfully! Please click the button below to activate your account and get started.
+        </p>
+
+        <div class="button-container">
+          <a class="activate-button" th:with="url=(${baseUrl} + '/account/activate?key=' + ${user.activationKey})" th:href="${url}">
+            Activate My Account
+          </a>
+        </div>
+
+        <div class="alternative-link">
+          <span class="alternative-link-label">Or copy and paste this link into your browser:</span>
+          <a th:with="url=(${baseUrl} + '/account/activate?key=' + ${user.activationKey})" th:href="${url}" th:text="${url}">
+            Activation link
+          </a>
+        </div>
+
+        <div class="security-note">
+          <strong>Security Note:</strong> If you didn't create this account, please ignore this email. The account will not be activated
+          without clicking the link above.
+        </div>
+      </div>
+
+      <div class="email-footer">
+        <p class="footer-text" th:text="#{email.activation.text2}">Best regards,</p>
+        <p class="signature" th:text="#{email.signature}">The Yk App Team</p>
+        <div class="divider"></div>
+        <p class="footer-text" style="font-size: 12px; color: #999">This is an automated email. Please do not reply to this message.</p>
+      </div>
+    </div>
   </body>
 </html>
