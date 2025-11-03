@@ -9,6 +9,7 @@ import { PICKLEBALL_PRICE } from './pickleball';
 import { BADMINTON_PRICE } from './badminton';
 import { BASKETBALL_PRICE } from './basketball';
 import { FUTSAL_PRICE } from './futsal';
+import axios from 'axios';
 
 interface TimeSlotProps {
   courtId: string;
@@ -92,13 +93,11 @@ const TimeSlot: React.FC<TimeSlotProps> = ({ courtId, sportId }) => {
           user,
         };
 
-        const response = await fetch('/api/bookings', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(booking),
-        });
-
-        if (!response.ok) throw new Error('Failed to create booking');
+        // const response = await axios.post('/api/bookings', {
+        //   body: JSON.stringify(booking),
+        // });
+        //
+        // if (!response.ok) throw new Error('Failed to create booking');
       }
 
       const hours = slotsToBook.length;

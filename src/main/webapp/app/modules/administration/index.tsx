@@ -13,7 +13,7 @@ import ManageCourtAvailability from './manage-court-availability/ManageCourtAvai
 import ManageVoucher from './manage-voucher/ManageVoucher';
 import ManageBookings from './manage-bookings/ManageBookings';
 import ViewRevenue from './view-revenue/ViewRevenue';
-import AdminPaymentManagement from './payment-management/payment-management';
+import AdminPaymentManagement from 'app/entities/payment-management/payment-management';
 
 const AdministrationRoutes = () => (
   <div>

@@ -94,11 +94,21 @@ const AdminPaymentManagement = () => {
           <thead>
             <tr>
               <th>ID</th>
-              <th><Translate contentKey="ykApp.payment.amount">Amount</Translate></th>
-              <th><Translate contentKey="ykApp.payment.paymentDate">Payment Date</Translate></th>
-              <th><Translate contentKey="ykApp.payment.status">Status</Translate></th>
-              <th><Translate contentKey="ykApp.payment.user">User</Translate></th>
-              <th><Translate contentKey="ykApp.payment.booking">Booking</Translate></th>
+              <th>
+                <Translate contentKey="ykApp.payment.amount">Amount</Translate>
+              </th>
+              <th>
+                <Translate contentKey="ykApp.payment.paymentDate">Payment Date</Translate>
+              </th>
+              <th>
+                <Translate contentKey="ykApp.payment.status">Status</Translate>
+              </th>
+              <th>
+                <Translate contentKey="ykApp.payment.user">User</Translate>
+              </th>
+              <th>
+                <Translate contentKey="ykApp.payment.booking">Booking</Translate>
+              </th>
               <th>Actions</th>
             </tr>
           </thead>
