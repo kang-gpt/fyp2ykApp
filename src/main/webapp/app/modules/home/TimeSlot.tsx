@@ -10,11 +10,16 @@ import { BADMINTON_PRICE } from './badminton';
 import { BASKETBALL_PRICE } from './basketball';
 import { FUTSAL_PRICE } from './futsal';
 import axios from 'axios';
+import dayjs from 'dayjs';
 
 interface TimeSlotProps {
   courtId: string;
   sportId: string;
 }
+
+import { createEntity } from 'app/entities/booking/booking.reducer';
+
+import { BookingStatus } from 'app/shared/model/enumerations/booking-status.model';
 
 const TimeSlot: React.FC<TimeSlotProps> = ({ courtId, sportId }) => {
   const dispatch = useAppDispatch();
@@ -81,24 +86,25 @@ const TimeSlot: React.FC<TimeSlotProps> = ({ courtId, sportId }) => {
     }
 
     try {
-      for (const bookingId of slotsToBook) {
+      const bookingPromises = slotsToBook.map(bookingId => {
         const [dateString, slot] = bookingId.split(' ');
-        const startTime = new Date(`${dateString}T${slot}`);
-        const endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
+        const startTime = dayjs(`${dateString}T${slot}`);
+        const endTime = dayjs(startTime).add(1, 'hour');
 
         const booking = {
-          startTime: startTime.toISOString(),
-          endTime: endTime.toISOString(),
-          court: { id: courtId },
+          bookingDate: startTime,
+          status: BookingStatus.PENDING as 'PENDING' | 'APPROVED' | 'REJECTED',
+          timeSlot: {
+            startTime: startTime.toISOString(),
+            endTime: endTime.toISOString(),
+            court: { id: courtId },
+          },
           user,
         };
+        return dispatch(createEntity(booking as any));
+      });
 
-        // const response = await axios.post('/api/bookings', {
-        //   body: JSON.stringify(booking),
-        // });
-        //
-        // if (!response.ok) throw new Error('Failed to create booking');
-      }
+      await Promise.all(bookingPromises);
 
       const hours = slotsToBook.length;
       const sportName = sportEntity?.name?.toLowerCase();

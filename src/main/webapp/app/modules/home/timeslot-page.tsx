@@ -28,7 +28,8 @@ const TimeSlotPage = () => {
     if (selectedSportName) {
       setLoading(true);
       setError(null);
-      axios.get<ICourt[]>(`${API_URL}?sportName=${selectedSportName}`)
+      axios
+        .get<ICourt[]>(`${API_URL}?sportName=${selectedSportName}`)
         .then(response => {
           setCourts(response.data);
         })
@@ -76,8 +77,12 @@ const TimeSlotPage = () => {
           <thead>
             <tr>
               <th>ID</th>
-              <th><Translate contentKey="ykApp.court.name">Name</Translate></th>
-              <th><Translate contentKey="ykApp.court.sport">Sport</Translate></th>
+              <th>
+                <Translate contentKey="ykApp.court.name">Name</Translate>
+              </th>
+              <th>
+                <Translate contentKey="ykApp.court.sport">Sport</Translate>
+              </th>
               <th>Actions</th>
             </tr>
           </thead>

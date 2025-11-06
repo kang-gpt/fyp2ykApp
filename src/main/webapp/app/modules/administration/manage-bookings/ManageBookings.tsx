@@ -1,84 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Translate } from 'react-jhipster';
+import React, { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { getEntities, approveBooking, rejectBooking } from 'app/entities/booking/booking.reducer';
+import { updatePaymentStatus } from 'app/entities/payment/payment.reducer';
+
 import { Table, Button, Input } from 'reactstrap';
 import { Link } from 'react-router-dom';
-
-interface IBooking {
-  id?: number;
-  bookingDate?: string;
-  user?: { id: number; login: string };
-  court?: { id: number; name: string };
-  payment?: { id: number; status: string };
-  status?: string;
-}
+import { Translate } from 'react-jhipster';
 
 const ManageBookings = () => {
-  const [bookings, setBookings] = useState<IBooking[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const API_URL = '/api/bookings';
-  const PAYMENT_API_URL = '/api/payments';
-
-  const fetchBookings = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await axios.get<IBooking[]>(API_URL);
-      setBookings(response.data);
-    } catch (err) {
-      setError('Failed to fetch bookings.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const dispatch = useAppDispatch();
+  const bookings = useAppSelector(state => state.booking.entities);
+  const loading = useAppSelector(state => state.booking.loading);
+  const error = useAppSelector(state => state.booking.errorMessage);
+  const updateSuccess = useAppSelector(state => state.booking.updateSuccess);
 
   useEffect(() => {
-    fetchBookings();
-  }, []);
+    dispatch(getEntities({}));
+  }, [dispatch, updateSuccess]);
 
-  const handlePaymentStatusChange = async (paymentId: number, newStatus: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      await axios.put(`${PAYMENT_API_URL}/${paymentId}/status?status=${newStatus}`);
-      fetchBookings(); // Refresh the list after update
-    } catch (err) {
-      setError('Failed to update payment status.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+  const handleRejectBooking = (id: number) => {
+    dispatch(rejectBooking(id));
   };
 
-  const handleApproveBooking = async (id: number) => {
-    setLoading(true);
-    setError(null);
-    try {
-      await axios.put(`${API_URL}/${id}/approve`);
-      fetchBookings();
-    } catch (err) {
-      setError('Failed to approve booking.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRejectBooking = async (id: number) => {
-    setLoading(true);
-    setError(null);
-    try {
-      await axios.put(`${API_URL}/${id}/reject`);
-      fetchBookings();
-    } catch (err) {
-      setError('Failed to reject booking.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+  const handlePaymentStatusChange = (id: number, status: string) => {
+    dispatch(updatePaymentStatus({ id, status }));
   };
 
   return (
@@ -86,12 +31,6 @@ const ManageBookings = () => {
       <h2>
         <Translate contentKey="ykApp.booking.home.title">Manage Bookings</Translate>
       </h2>
-
-      <div className="d-flex justify-content-end mb-3">
-        <Button className="ms-2" color="info" onClick={fetchBookings} disabled={loading}>
-          <Translate contentKey="ykApp.booking.home.refreshListLabel">Refresh List</Translate>
-        </Button>
-      </div>
 
       {loading && <p>Loading bookings...</p>}
       {error && <p className="text-danger">{error}</p>}
@@ -181,7 +120,7 @@ const ManageBookings = () => {
                         <Button
                           color="success"
                           size="sm"
-                          onClick={() => handleApproveBooking(booking.id)}
+                          onClick={() => dispatch(approveBooking(booking.id))}
                           disabled={loading}
                           data-cy="entityApproveButton"
                         >
@@ -190,7 +129,7 @@ const ManageBookings = () => {
                         <Button
                           color="danger"
                           size="sm"
-                          onClick={() => handleRejectBooking(booking.id)}
+                          onClick={() => dispatch(rejectBooking(booking.id))}
                           disabled={loading}
                           data-cy="entityRejectButton"
                         >

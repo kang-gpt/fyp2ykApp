@@ -123,4 +123,23 @@ public class PaymentService {
         LOG.debug("Request to delete Payment : {}", id);
         paymentRepository.deleteById(id);
     }
+
+    /**
+     * Update payment status.
+     *
+     * @param id the id of the entity.
+     * @param status the new status.
+     * @return the persisted entity.
+     */
+    public Optional<PaymentDTO> updateStatus(Long id, String status) {
+        LOG.debug("Request to update Payment status : {}, {}", id, status);
+        return paymentRepository
+            .findById(id)
+            .map(payment -> {
+                payment.setStatus(status);
+                return payment;
+            })
+            .map(paymentRepository::save)
+            .map(paymentMapper::toDto);
+    }
 }

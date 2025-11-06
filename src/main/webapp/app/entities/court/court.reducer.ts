@@ -17,13 +17,16 @@ const apiUrl = 'api/courts';
 
 // Actions
 
-export const getEntities = createAsyncThunk('court/fetch_entity_list', async ({ page, size, sort, sportName }: IQueryParams & { sportName?: string }) => {
-  let requestUrl = `${apiUrl}?cacheBuster=${new Date().getTime()}`;
-  if (sportName) {
-    requestUrl += `&sportName=${sportName}`;
-  }
-  return axios.get<ICourt[]>(requestUrl);
-});
+export const getEntities = createAsyncThunk(
+  'court/fetch_entity_list',
+  async ({ page, size, sort, sportName }: IQueryParams & { sportName?: string }) => {
+    let requestUrl = `${apiUrl}?cacheBuster=${new Date().getTime()}`;
+    if (sportName) {
+      requestUrl += `&sportName=${sportName}`;
+    }
+    return axios.get<ICourt[]>(requestUrl);
+  },
+);
 
 export const getEntity = createAsyncThunk(
   'court/fetch_entity',
@@ -48,6 +51,16 @@ export const updateEntity = createAsyncThunk(
   'court/update_entity',
   async (entity: ICourt, thunkAPI) => {
     const result = await axios.put<ICourt>(`${apiUrl}/${entity.id}`, cleanEntity(entity));
+    thunkAPI.dispatch(getEntities({}));
+    return result;
+  },
+  { serializeError: serializeAxiosError },
+);
+
+export const partialUpdateEntity = createAsyncThunk(
+  'court/partial_update_entity',
+  async (entity: ICourt, thunkAPI) => {
+    const result = await axios.patch<ICourt>(`${apiUrl}/${entity.id}`, cleanEntity(entity));
     thunkAPI.dispatch(getEntities({}));
     return result;
   },
@@ -90,7 +103,7 @@ export const CourtSlice = createEntitySlice({
           entities: data,
         };
       })
-      .addMatcher(isFulfilled(createEntity, updateEntity), (state, action) => {
+      .addMatcher(isFulfilled(createEntity, updateEntity, partialUpdateEntity), (state, action) => {
         state.updating = false;
         state.loading = false;
         state.updateSuccess = true;
@@ -101,7 +114,7 @@ export const CourtSlice = createEntitySlice({
         state.updateSuccess = false;
         state.loading = true;
       })
-      .addMatcher(isPending(createEntity, updateEntity, deleteEntity), state => {
+      .addMatcher(isPending(createEntity, updateEntity, partialUpdateEntity, deleteEntity), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.updating = true;

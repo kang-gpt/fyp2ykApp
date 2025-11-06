@@ -185,17 +185,11 @@ public class PaymentResource {
     public ResponseEntity<PaymentDTO> updatePaymentStatus(@PathVariable("id") Long id, @RequestParam("status") String status) {
         LOG.debug("REST request to update Payment status : {}, {}", id, status);
 
-        Optional<PaymentDTO> paymentDTO = paymentService.findOne(id);
-        if (paymentDTO.isEmpty()) {
-            throw new BadRequestAlertException("Payment not found", ENTITY_NAME, "idnotfound");
-        }
+        Optional<PaymentDTO> paymentDTO = paymentService.updateStatus(id, status);
 
-        PaymentDTO payment = paymentDTO.get();
-        payment.setStatus(status);
-        payment = paymentService.update(payment);
-
-        return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, payment.getId().toString()))
-            .body(payment);
+        return ResponseUtil.wrapOrNotFound(
+            paymentDTO,
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString())
+        );
     }
 }

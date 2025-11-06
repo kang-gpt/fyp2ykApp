@@ -77,6 +77,17 @@ export const deleteEntity = createAsyncThunk(
   { serializeError: serializeAxiosError },
 );
 
+export const updatePaymentStatus = createAsyncThunk(
+  'payment/update_status',
+  async ({ id, status }: { id: string | number; status: string }, thunkAPI) => {
+    const requestUrl = `${apiUrl}/${id}/status?status=${status}`;
+    const result = await axios.put<IPayment>(requestUrl);
+    thunkAPI.dispatch(getEntities({}));
+    return result;
+  },
+  { serializeError: serializeAxiosError },
+);
+
 // slice
 
 export const PaymentSlice = createEntitySlice({

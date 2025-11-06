@@ -1,56 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Translate } from 'react-jhipster';
+import React, { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { getEntities } from 'app/entities/booking/booking.reducer';
 import { Table, Button } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { Translate } from 'react-jhipster';
 import { format } from 'date-fns';
 
-interface IBooking {
-  id?: number;
-  bookingDate?: string;
-  startTime?: string;
-  endTime?: string;
-  user?: { id: number; login: string };
-  court?: { id: number; name: string; sport: { name: string } };
-  payment?: { id: number; status: string };
-}
-
 const MyBookings = () => {
-  const [bookings, setBookings] = useState<IBooking[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const API_URL = '/api/my-bookings';
-
-  const fetchMyBookings = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await axios.get<IBooking[]>(API_URL);
-      setBookings(response.data);
-    } catch (err) {
-      setError('Failed to fetch your bookings.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const dispatch = useAppDispatch();
+  const bookings = useAppSelector(state => state.booking.entities);
+  const loading = useAppSelector(state => state.booking.loading);
+  const error = useAppSelector(state => state.booking.errorMessage);
 
   useEffect(() => {
-    fetchMyBookings();
-  }, []);
+    dispatch(getEntities({}));
+  }, [dispatch]);
 
   return (
     <div>
       <h2 id="my-bookings-heading" data-cy="MyBookingsHeading">
         <Translate contentKey="ykApp.booking.home.myBookingsTitle">My Bookings</Translate>
       </h2>
-
-      <div className="d-flex justify-content-end mb-3">
-        <Button className="ms-2" color="info" onClick={fetchMyBookings} disabled={loading}>
-          <Translate contentKey="ykApp.booking.home.refreshListLabel">Refresh List</Translate>
-        </Button>
-      </div>
 
       {loading && <p>Loading your bookings...</p>}
       {error && <p className="text-danger">{error}</p>}
