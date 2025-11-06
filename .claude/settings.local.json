@@ -3,7 +3,21 @@
     "allow": [
       "Bash(netstat:*)",
       "Bash(findstr:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(mvn clean:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(cmd /c \"mvnw.cmd clean compile -DskipTests\")",
+      "Bash(mvnw.cmd clean package:*)",
+      "Bash(./mvnw.cmd:*)",
+      "Bash(dir:*)",
+      "Bash(nul)",
+      "Bash(timeout /t 5)",
+      "Bash(mysql:*)",
+      "Bash(./mvnw)",
+      "Bash(mvnw.cmd:*)",
+      "Bash(cmd /c \"mvnw.cmd\")",
+      "Bash(taskkill:*)",
+      "Bash(cmd /c \"taskkill /F /PID 10248\")"
     ],
     "deny": [],
     "ask": []

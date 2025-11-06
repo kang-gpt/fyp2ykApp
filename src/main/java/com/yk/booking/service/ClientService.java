@@ -1,9 +1,10 @@
 package com.yk.booking.service;
 
 import com.yk.booking.domain.Client;
-import com.yk.booking.repository.ClientRepository;
+import com.yk.booking.domain.ClientTier;
 import com.yk.booking.repository.BookingRepository;
-import com.yk.booking.domain.enumeration.ClientTier;
+import com.yk.booking.repository.ClientRepository;
+import com.yk.booking.repository.ClientTierRepository;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +24,16 @@ public class ClientService {
 
     private final ClientRepository clientRepository;
     private final BookingRepository bookingRepository;
+    private final ClientTierRepository clientTierRepository;
 
-    public ClientService(ClientRepository clientRepository, BookingRepository bookingRepository) {
+    public ClientService(
+        ClientRepository clientRepository,
+        BookingRepository bookingRepository,
+        ClientTierRepository clientTierRepository
+    ) {
         this.clientRepository = clientRepository;
         this.bookingRepository = bookingRepository;
+        this.clientTierRepository = clientTierRepository;
     }
 
     /**
@@ -75,8 +82,8 @@ public class ClientService {
                 if (client.getDob() != null) {
                     existingClient.setDob(client.getDob());
                 }
-                if (client.getTier() != null) {
-                    existingClient.setTier(client.getTier());
+                if (client.getClientTier() != null) {
+                    existingClient.setClientTier(client.getClientTier());
                 }
 
                 return existingClient;
@@ -128,18 +135,22 @@ public class ClientService {
         LOG.debug("Request to update Client Tier for Client : {}", client);
 
         Long totalBookings = bookingRepository.countByUser(client.getUser());
-        ClientTier tier;
+        String tierName;
 
         if (totalBookings >= 21) {
-            tier = ClientTier.PLATINUM;
+            tierName = "PLATINUM";
         } else if (totalBookings >= 11) {
-            tier = ClientTier.GOLD;
+            tierName = "GOLD";
         } else if (totalBookings >= 6) {
-            tier = ClientTier.IRON;
+            tierName = "IRON";
         } else {
-            tier = ClientTier.LEAD;
+            tierName = "LEAD";
         }
-        client.setTier(tier);
+
+        ClientTier tier = clientTierRepository
+            .findByTierName(tierName)
+            .orElseThrow(() -> new RuntimeException("ClientTier not found: " + tierName));
+        client.setClientTier(tier);
         return clientRepository.save(client);
     }
 }

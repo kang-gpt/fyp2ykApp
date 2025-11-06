@@ -1,13 +1,12 @@
 import dayjs from 'dayjs';
-import { IUser } from 'app/shared/model/user.model';
-import { ICourt } from 'app/shared/model/court.model';
+import { ITimeSlot } from 'app/shared/model/time-slot.model';
+import { BookingStatus } from 'app/shared/model/enumerations/booking-status.model';
 
 export interface IBooking {
   id?: number;
-  startTime?: string | null;
-  endTime?: string | null;
-  user?: IUser | null;
-  court?: ICourt | null;
+  bookingDate?: dayjs.Dayjs;
+  status?: keyof typeof BookingStatus;
+  timeSlot?: ITimeSlot | null;
 }
 
 export const defaultValue: Readonly<IBooking> = {};

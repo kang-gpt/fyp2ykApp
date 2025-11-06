@@ -1,0 +1,27 @@
+{
+  "ykApp": {
+    "timeSlot": {
+      "home": {
+        "title": "Time Slots",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "创建新 Time Slot",
+        "createOrEditLabel": "创建或编辑 Time Slot",
+        "notFound": "No Time Slots found"
+      },
+      "created": "Time Slot {{ param }} 创建成功",
+      "updated": "Time Slot {{ param }} 更新成功",
+      "deleted": "Time Slot {{ param }} 删除成功",
+      "delete": {
+        "question": "你确定要删除 Time Slot {{ id }} 吗？"
+      },
+      "detail": {
+        "title": "Time Slot"
+      },
+      "id": "ID",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "booking": "Booking",
+      "court": "Court"
+    }
+  }
+}

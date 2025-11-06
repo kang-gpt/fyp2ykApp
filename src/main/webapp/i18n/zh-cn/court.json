@@ -1,0 +1,26 @@
+{
+  "ykApp": {
+    "court": {
+      "home": {
+        "title": "Courts",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "创建新 Court",
+        "createOrEditLabel": "创建或编辑 Court",
+        "notFound": "No Courts found"
+      },
+      "created": "Court {{ param }} 创建成功",
+      "updated": "Court {{ param }} 更新成功",
+      "deleted": "Court {{ param }} 删除成功",
+      "delete": {
+        "question": "你确定要删除 Court {{ id }} 吗？"
+      },
+      "detail": {
+        "title": "Court"
+      },
+      "id": "ID",
+      "name": "Name",
+      "timeSlot": "Time Slot",
+      "sport": "Sport"
+    }
+  }
+}

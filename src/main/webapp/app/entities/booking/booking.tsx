@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate, getSortState, TextFormat } from 'react-jhipster';
+import { TextFormat, Translate, getSortState } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSort, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
-import { ASC, DESC, SORT } from 'app/shared/util/pagination.constants';
+import { faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons';
+import { APP_DATE_FORMAT } from 'app/config/constants';
+import { ASC, DESC } from 'app/shared/util/pagination.constants';
 import { overrideSortStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
@@ -72,7 +72,7 @@ export const Booking = () => {
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
             <Translate contentKey="ykApp.booking.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          <Link to="/bookings/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+          <Link to="/booking/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
             <FontAwesomeIcon icon="plus" />
             &nbsp;
             <Translate contentKey="ykApp.booking.home.createLabel">Create new Booking</Translate>
@@ -87,19 +87,16 @@ export const Booking = () => {
                 <th className="hand" onClick={sort('id')}>
                   <Translate contentKey="ykApp.booking.id">ID</Translate> <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
                 </th>
-                <th className="hand" onClick={sort('startTime')}>
-                  <Translate contentKey="ykApp.booking.startTime">Start Time</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('startTime')} />
+                <th className="hand" onClick={sort('bookingDate')}>
+                  <Translate contentKey="ykApp.booking.bookingDate">Booking Date</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('bookingDate')} />
                 </th>
-                <th className="hand" onClick={sort('endTime')}>
-                  <Translate contentKey="ykApp.booking.endTime">End Time</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('endTime')} />
-                </th>
-                <th>
-                  <Translate contentKey="ykApp.booking.user">User</Translate> <FontAwesomeIcon icon="sort" />
+                <th className="hand" onClick={sort('status')}>
+                  <Translate contentKey="ykApp.booking.status">Status</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('status')} />
                 </th>
                 <th>
-                  <Translate contentKey="ykApp.booking.court">Court</Translate> <FontAwesomeIcon icon="sort" />
+                  <Translate contentKey="ykApp.booking.timeSlot">Time Slot</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th />
               </tr>
@@ -108,30 +105,31 @@ export const Booking = () => {
               {bookingList.map((booking, i) => (
                 <tr key={`entity-${i}`} data-cy="entityTable">
                   <td>
-                    <Button tag={Link} to={`/bookings/${booking.id}`} color="link" size="sm">
+                    <Button tag={Link} to={`/booking/${booking.id}`} color="link" size="sm">
                       {booking.id}
                     </Button>
                   </td>
-                  <td>{booking.startTime ? <TextFormat type="date" value={booking.startTime} format={APP_DATE_FORMAT} /> : null}</td>
-                  <td>{booking.endTime ? <TextFormat type="date" value={booking.endTime} format={APP_DATE_FORMAT} /> : null}</td>
-                  <td>{booking.user ? booking.user.login : ''}</td>
-                  <td>{booking.court ? <Link to={`/courts/${booking.court.id}`}>{booking.court.name}</Link> : ''}</td>
+                  <td>{booking.bookingDate ? <TextFormat type="date" value={booking.bookingDate} format={APP_DATE_FORMAT} /> : null}</td>
+                  <td>
+                    <Translate contentKey={`ykApp.BookingStatus.${booking.status}`} />
+                  </td>
+                  <td>{booking.timeSlot ? <Link to={`/time-slot/${booking.timeSlot.id}`}>{booking.timeSlot.id}</Link> : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`/bookings/${booking.id}`} color="info" size="sm" data-cy="entityDetailsButton">
+                      <Button tag={Link} to={`/booking/${booking.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                         <FontAwesomeIcon icon="eye" />{' '}
                         <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.view">View</Translate>
                         </span>
                       </Button>
-                      <Button tag={Link} to={`/bookings/${booking.id}/edit`} color="primary" size="sm" data-cy="entityEditButton">
+                      <Button tag={Link} to={`/booking/${booking.id}/edit`} color="primary" size="sm" data-cy="entityEditButton">
                         <FontAwesomeIcon icon="pencil-alt" />{' '}
                         <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.edit">Edit</Translate>
                         </span>
                       </Button>
                       <Button
-                        onClick={() => (window.location.href = `/bookings/${booking.id}/delete`)}
+                        onClick={() => (window.location.href = `/booking/${booking.id}/delete`)}
                         color="danger"
                         size="sm"
                         data-cy="entityDeleteButton"

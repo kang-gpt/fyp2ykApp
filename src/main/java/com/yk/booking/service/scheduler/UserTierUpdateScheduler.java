@@ -1,9 +1,10 @@
 package com.yk.booking.service.scheduler;
 
 import com.yk.booking.domain.Client;
+import com.yk.booking.domain.ClientTier;
 import com.yk.booking.repository.BookingRepository;
 import com.yk.booking.repository.ClientRepository;
-import com.yk.booking.domain.enumeration.ClientTier;
+import com.yk.booking.repository.ClientTierRepository;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +19,16 @@ public class UserTierUpdateScheduler {
 
     private final ClientRepository clientRepository;
     private final BookingRepository bookingRepository;
+    private final ClientTierRepository clientTierRepository;
 
-    public UserTierUpdateScheduler(ClientRepository clientRepository, BookingRepository bookingRepository) {
+    public UserTierUpdateScheduler(
+        ClientRepository clientRepository,
+        BookingRepository bookingRepository,
+        ClientTierRepository clientTierRepository
+    ) {
         this.clientRepository = clientRepository;
         this.bookingRepository = bookingRepository;
+        this.clientTierRepository = clientTierRepository;
     }
 
     // Run every 24 hours (86400000 ms)
@@ -44,19 +51,19 @@ public class UserTierUpdateScheduler {
 
             String tierName;
             if (totalCompletedBookings >= 21) {
-                tierName = "Platinum";
+                tierName = "PLATINUM";
             } else if (totalCompletedBookings >= 11) {
-                tierName = "Gold";
+                tierName = "GOLD";
             } else if (totalCompletedBookings >= 6) {
-                tierName = "Iron";
+                tierName = "IRON";
             } else {
-                tierName = "Lead";
+                tierName = "LEAD";
             }
 
-            ClientTier newClientTier = ClientTier.valueOf(tierName.toUpperCase());
+            ClientTier newClientTier = clientTierRepository.findByTierName(tierName).orElse(null);
 
-            if (!newClientTier.equals(client.getTier())) {
-                client.setTier(newClientTier);
+            if (newClientTier != null && !newClientTier.equals(client.getClientTier())) {
+                client.setClientTier(newClientTier);
                 clientRepository.save(client);
                 log.info(
                     "Updated client {} (user: {}) tier to {}. Total completed bookings: {}",

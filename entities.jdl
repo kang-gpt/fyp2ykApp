@@ -11,13 +11,27 @@ entity TimeSlot {
   endTime Instant required
 }
 
+enum BookingStatus {
+  PENDING,
+  APPROVED,
+  REJECTED
+}
+
 entity Booking {
-  bookingDate Instant required
+  bookingDate Instant required,
+  status BookingStatus required
 }
 
 entity ClientTier {
   tierName String required
   discountPercentage BigDecimal
+}
+
+entity Client {
+  firstName String required,
+  lastName String required,
+  email String required pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/),
+  phone String
 }
 
 entity Payment {
@@ -28,6 +42,14 @@ entity Payment {
   transactionId String
 }
 
+relationship OneToOne {
+  Booking{timeSlot} to TimeSlot
+}
+
+relationship ManyToOne {
+  Client{user} to User with builtInEntity
+}
+
 relationship OneToMany {
   Sport{court} to Court{sport}
 }
@@ -36,9 +58,7 @@ relationship OneToMany {
   Court{timeSlot} to TimeSlot{court}
 }
 
-relationship OneToOne {
-  TimeSlot{booking} to Booking{timeSlot}
-}
+
 
 relationship ManyToOne {
   Client{clientTier} to ClientTier
@@ -49,7 +69,7 @@ relationship OneToOne {
 }
 
 relationship ManyToOne {
-  Payment{user} to User
+  Payment{user} to User with builtInEntity
 }
 
 dto * with mapstruct

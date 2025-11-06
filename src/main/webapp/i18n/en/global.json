@@ -8,7 +8,9 @@
       "entities": {
         "main": "Entities",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
-        "client": "Client"
+        "client": "Client",
+        "booking": "Booking",
+        "timeSlot": "Time Slot"
       },
       "account": {
         "main": "Account",
@@ -100,7 +102,9 @@
       "open": "Open",
       "save": "Save",
       "view": "View",
-      "show": "Show {{otherEntity}}"
+      "show": "Show {{otherEntity}}",
+      "approve": "Approve",
+      "reject": "Reject"
     },
     "detail": {
       "field": "Field",

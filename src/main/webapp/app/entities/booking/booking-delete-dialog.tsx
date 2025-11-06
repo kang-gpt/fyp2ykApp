@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-import { getEntity, deleteEntity } from './booking.reducer';
+import { deleteEntity, getEntity } from './booking.reducer';
 
 export const BookingDeleteDialog = () => {
   const dispatch = useAppDispatch();
 
   const pageLocation = useLocation();
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id } = useParams<'id'>();
 
   const [loadModal, setLoadModal] = useState(false);
 
@@ -25,7 +25,7 @@ export const BookingDeleteDialog = () => {
   const updateSuccess = useAppSelector(state => state.booking.updateSuccess);
 
   const handleClose = () => {
-    navigate('/bookings');
+    navigate('/booking');
   };
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export const BookingDeleteDialog = () => {
   }, [updateSuccess]);
 
   const confirmDelete = () => {
-    dispatch(deleteEntity(id));
+    dispatch(deleteEntity(bookingEntity.id));
   };
 
   return (

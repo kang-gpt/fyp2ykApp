@@ -1,71 +1,118 @@
 package com.yk.booking.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.yk.booking.domain.enumeration.BookingStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
 
+/**
+ * A Booking.
+ */
 @Entity
 @Table(name = "booking")
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class Booking implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column(name = "start_time")
-    private Instant startTime;
+    @NotNull
+    @Column(name = "booking_date", nullable = false)
+    private Instant bookingDate;
 
-    @Column(name = "end_time")
-    private Instant endTime;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private BookingStatus status;
 
-    @ManyToOne
+    @JsonIgnoreProperties(value = { "booking", "court" }, allowSetters = true)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(unique = true)
+    private TimeSlot timeSlot;
+
+    @JsonIgnoreProperties(value = { "user", "booking" }, allowSetters = true)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(unique = true)
+    private Payment payment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
-
-    @ManyToOne
-    @JsonIgnoreProperties(value = { "bookings" }, allowSetters = true)
-    private Court court;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public Booking id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public Instant getStartTime() {
-        return startTime;
+    public Instant getBookingDate() {
+        return this.bookingDate;
     }
 
-    public Booking startTime(Instant startTime) {
-        this.startTime = startTime;
+    public Booking bookingDate(Instant bookingDate) {
+        this.setBookingDate(bookingDate);
         return this;
     }
 
-    public void setStartTime(Instant startTime) {
-        this.startTime = startTime;
+    public void setBookingDate(Instant bookingDate) {
+        this.bookingDate = bookingDate;
     }
 
-    public Instant getEndTime() {
-        return endTime;
+    public BookingStatus getStatus() {
+        return this.status;
     }
 
-    public Booking endTime(Instant endTime) {
-        this.endTime = endTime;
+    public Booking status(BookingStatus status) {
+        this.setStatus(status);
         return this;
     }
 
-    public void setEndTime(Instant endTime) {
-        this.endTime = endTime;
+    public void setStatus(BookingStatus status) {
+        this.status = status;
+    }
+
+    public TimeSlot getTimeSlot() {
+        return this.timeSlot;
+    }
+
+    public void setTimeSlot(TimeSlot timeSlot) {
+        this.timeSlot = timeSlot;
+    }
+
+    public Booking timeSlot(TimeSlot timeSlot) {
+        this.setTimeSlot(timeSlot);
+        return this;
+    }
+
+    public Payment getPayment() {
+        return this.payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
+    }
+
+    public Booking payment(Payment payment) {
+        this.setPayment(payment);
+        return this;
     }
 
     public User getUser() {
-        return user;
+        return this.user;
     }
 
     public void setUser(User user) {
@@ -74,19 +121,6 @@ public class Booking implements Serializable {
 
     public Booking user(User user) {
         this.setUser(user);
-        return this;
-    }
-
-    public Court getCourt() {
-        return court;
-    }
-
-    public void setCourt(Court court) {
-        this.court = court;
-    }
-
-    public Booking court(Court court) {
-        this.setCourt(court);
         return this;
     }
 
@@ -100,7 +134,7 @@ public class Booking implements Serializable {
         if (!(o instanceof Booking)) {
             return false;
         }
-        return id != null && id.equals(((Booking) o).id);
+        return getId() != null && getId().equals(((Booking) o).getId());
     }
 
     @Override
@@ -114,8 +148,8 @@ public class Booking implements Serializable {
     public String toString() {
         return "Booking{" +
             "id=" + getId() +
-            ", startTime='" + getStartTime() + "'" +
-            ", endTime='" + getEndTime() + "'" +
+            ", bookingDate='" + getBookingDate() + "'" +
+            ", status='" + getStatus() + "'" +
             "}";
     }
 }

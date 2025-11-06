@@ -1,0 +1,22 @@
+{
+  "annotations": {
+    "changelogDate": "20251104073117"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "tierName",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "discountPercentage",
+      "fieldType": "BigDecimal"
+    }
+  ],
+  "name": "ClientTier",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

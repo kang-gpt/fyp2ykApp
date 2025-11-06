@@ -6,17 +6,25 @@ const PaymentPage = () => {
   const navigate = useNavigate();
   const { sport, hours, totalPrice, courtId, slotsToBook } = location.state || {};
   const [showMessage, setShowMessage] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const handleBack = () => {
-    navigate(-1); // goes back to previous page
-  };
-
-  const handleHome = () => {
-    navigate('/'); // navigate to homepage
+    navigate(-1);
   };
 
   const handleDone = () => {
-    setShowMessage(true); // show success message
+    setShowMessage(true);
+  };
+
+  const handleHome = () => {
+    navigate('/');
+  };
+
+  const copyCourtDetails = () => {
+    const details = `Sport: ${sport}\nCourt ID: ${courtId}\nSelected Slots: ${slotsToBook.join(', ')}\nTotal Hours: ${hours}\nTotal Price: RM ${totalPrice}`;
+    navigator.clipboard.writeText(details);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -80,6 +88,25 @@ const PaymentPage = () => {
               Total Price: <strong>RM {totalPrice}</strong>
             </h4>
 
+            {/* Copy Court Details Section */}
+            <div className="text-center my-4 p-3 border rounded bg-light">
+              <h5 className="mb-2">Court Details for Bank Transfer</h5>
+              <p className="mb-2 text-muted small">Copy and paste this as your payment reference during transfer:</p>
+              <div className="d-flex justify-content-center align-items-center mb-2">
+                <input
+                  type="text"
+                  readOnly
+                  value={`Sport: ${sport} | Court: ${courtId} | Slots: ${slotsToBook.join(', ')} | RM ${totalPrice}`}
+                  className="form-control w-75 text-center"
+                />
+                <button onClick={copyCourtDetails} className="btn btn-outline-primary ms-2">
+                  {copied ? 'Copied!' : 'Copy'}
+                </button>
+              </div>
+              {copied && <small className="text-success">✅ Court details copied to clipboard!</small>}
+            </div>
+
+            {/* QR Code Section */}
             <div className="text-center mt-4 p-3 border rounded bg-light">
               <h4>Scan QR to Pay (Mock Payment)</h4>
               <img

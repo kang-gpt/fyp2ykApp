@@ -24,6 +24,7 @@ import Court from 'app/entities/court';
 import Booking from 'app/entities/booking';
 import Client from 'app/entities/client';
 import MyBookings from 'app/modules/my-bookings/MyBookings';
+import ManageBookings from 'app/modules/my-bookings/manage-bookings';
 
 const loading = <div>loading ...</div>;
 
@@ -72,7 +73,9 @@ const AppRoutes = () => {
               <Admin />
             </PrivateRoute>
           }
-        />
+        >
+          <Route path="manage-bookings" element={<ManageBookings />} />
+        </Route>
 
         <Route path="court" element={<Court />} />
         <Route

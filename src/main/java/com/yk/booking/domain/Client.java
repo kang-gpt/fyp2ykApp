@@ -1,10 +1,10 @@
 package com.yk.booking.domain;
 
-import com.yk.booking.domain.enumeration.ClientTier;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.yk.booking.domain.User;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
-import com.yk.booking.domain.User;
 
 /**
  * A Client.
@@ -33,9 +33,9 @@ public class Client implements Serializable {
     @Column(name = "dob")
     private Instant dob;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "tier")
-    private ClientTier tier;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = { "clients" }, allowSetters = true)
+    private ClientTier clientTier;
 
     @OneToOne
     @JoinColumn(unique = true)
@@ -121,17 +121,17 @@ public class Client implements Serializable {
         this.dob = dob;
     }
 
-    public ClientTier getTier() {
-        return this.tier;
+    public ClientTier getClientTier() {
+        return this.clientTier;
     }
 
-    public Client tier(ClientTier tier) {
-        this.setTier(tier);
+    public Client clientTier(ClientTier clientTier) {
+        this.setClientTier(clientTier);
         return this;
     }
 
-    public void setTier(ClientTier tier) {
-        this.tier = tier;
+    public void setClientTier(ClientTier clientTier) {
+        this.clientTier = clientTier;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
@@ -162,7 +162,6 @@ public class Client implements Serializable {
             ", description='" + getDescription() + "'" +
             ", age=" + getAge() +
             ", dob='" + getDob() + "'" +
-            ", tier='" + getTier() + "'" +
             "}";
     }
 }

@@ -2,35 +2,46 @@
   "annotations": {
     "changelogDate": "20250908155734"
   },
-  "dto": "no",
+  "applications": "*",
+  "dto": "mapstruct",
   "fields": [
     {
-      "fieldName": "name",
+      "fieldName": "firstName",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "lastName",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "email",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "pattern"],
+      "fieldValidateRulesPattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+    },
+    {
+      "fieldName": "phone",
       "fieldType": "String"
-    },
-    {
-      "fieldName": "description",
-      "fieldType": "String"
-    },
-    {
-      "fieldName": "age",
-      "fieldType": "Integer"
-    },
-    {
-      "fieldName": "dob",
-      "fieldType": "Instant"
-    },
-    {
-      "fieldName": "tier",
-      "fieldType": "ClientTier",
-      "fieldValues": "PLATINUM,GOLD,IRON,LEAD"
     }
   ],
-  "jpaMetamodelFiltering": false,
   "name": "Client",
-  "pagination": "pagination",
-  "readOnly": false,
-  "relationships": [],
+  "relationships": [
+    {
+      "otherEntityName": "user",
+      "relationshipName": "user",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipWithBuiltInEntity": true
+    },
+    {
+      "otherEntityName": "clientTier",
+      "relationshipName": "clientTier",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
   "searchEngine": "no",
   "service": "serviceClass"
 }

@@ -104,11 +104,11 @@ public class CourtResource {
             log.debug("All sports in DB: {}", allSports);
             Optional<Sport> foundSport = sportRepository.findByNameIgnoreCase(sportName);
             if (foundSport.isPresent()) {
-                List<Court> courtsBySport = courtRepository.findBySport(foundSport.get());
+                List<Court> courtsBySport = courtRepository.findBySport(foundSport.orElseThrow());
                 log.debug(
                     "Found sport {} with ID {} and {} courts.",
-                    foundSport.get().getName(),
-                    foundSport.get().getId(),
+                    foundSport.orElseThrow().getName(),
+                    foundSport.orElseThrow().getId(),
                     courtsBySport.size()
                 );
                 return courtsBySport;

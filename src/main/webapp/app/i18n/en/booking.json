@@ -21,7 +21,14 @@
       "startTime": "Start Time",
       "endTime": "End Time",
       "user": "User",
-      "court": "Court"
+      "court": "Court",
+      "status": "Status"
+    },
+    "entity": {
+      "action": {
+        "approve": "Approve",
+        "reject": "Reject"
+      }
     }
   }
 }

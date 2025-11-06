@@ -10,6 +10,7 @@ interface IBooking {
   user?: { id: number; login: string };
   court?: { id: number; name: string };
   payment?: { id: number; status: string };
+  status?: string;
 }
 
 const ManageBookings = () => {
@@ -52,9 +53,39 @@ const ManageBookings = () => {
     }
   };
 
+  const handleApproveBooking = async (id: number) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await axios.put(`${API_URL}/${id}/approve`);
+      fetchBookings();
+    } catch (err) {
+      setError('Failed to approve booking.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRejectBooking = async (id: number) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await axios.put(`${API_URL}/${id}/reject`);
+      fetchBookings();
+    } catch (err) {
+      setError('Failed to reject booking.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
-      <h2><Translate contentKey="ykApp.booking.home.title">Manage Bookings</Translate></h2>
+      <h2>
+        <Translate contentKey="ykApp.booking.home.title">Manage Bookings</Translate>
+      </h2>
 
       <div className="d-flex justify-content-end mb-3">
         <Button className="ms-2" color="info" onClick={fetchBookings} disabled={loading}>
@@ -76,10 +107,21 @@ const ManageBookings = () => {
           <thead>
             <tr>
               <th>ID</th>
-              <th><Translate contentKey="ykApp.booking.bookingDate">Booking Date</Translate></th>
-              <th><Translate contentKey="ykApp.booking.user">User</Translate></th>
-              <th><Translate contentKey="ykApp.booking.court">Court</Translate></th>
-              <th><Translate contentKey="ykApp.payment.status">Payment Status</Translate></th>
+              <th>
+                <Translate contentKey="ykApp.booking.bookingDate">Booking Date</Translate>
+              </th>
+              <th>
+                <Translate contentKey="ykApp.booking.user">User</Translate>
+              </th>
+              <th>
+                <Translate contentKey="ykApp.booking.court">Court</Translate>
+              </th>
+              <th>
+                <Translate contentKey="ykApp.payment.status">Payment Status</Translate>
+              </th>
+              <th>
+                <Translate contentKey="ykApp.booking.status">Booking Status</Translate>
+              </th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -89,28 +131,73 @@ const ManageBookings = () => {
                 <td>
                   <Link to={`/booking/${booking.id}`}>{booking.id}</Link>
                 </td>
-                <td>{booking.bookingDate}</td>
-                <td>{booking.user ? booking.user.login : ''}</td>
-                <td>{booking.court ? booking.court.name : ''}</td>
+                <td>{booking.bookingDate ? new Date(booking.bookingDate).toLocaleString() : 'N/A'}</td>
+                <td>{booking.user ? booking.user.login : 'N/A'}</td>
+                <td>{booking.court ? booking.court.name : 'N/A'}</td>
                 <td>
                   {booking.payment ? (
                     <Input
                       type="select"
                       name="paymentStatus"
-                      id="paymentStatus"
-                      value={booking.payment.status}
+                      id={`paymentStatus-${booking.id}`}
+                      value={booking.payment.status || 'Pending'}
                       onChange={e => handlePaymentStatusChange(booking.payment.id, e.target.value)}
+                      disabled={loading}
+                      className={
+                        booking.payment.status === 'Completed'
+                          ? 'text-success fw-bold'
+                          : booking.payment.status === 'Failed'
+                            ? 'text-danger fw-bold'
+                            : 'text-warning fw-bold'
+                      }
                     >
-                      <option value="Pending">Pending</option>
-                      <option value="Completed">Completed</option>
-                      <option value="Failed">Failed</option>
+                      <option value="Pending">⏳ Pending</option>
+                      <option value="Completed">✓ Completed</option>
+                      <option value="Failed">✗ Failed</option>
                     </Input>
                   ) : (
-                    'N/A'
+                    <span className="badge bg-secondary">No Payment</span>
                   )}
                 </td>
                 <td>
+                  <span
+                    className={`badge ${
+                      booking.status === 'APPROVED'
+                        ? 'bg-success'
+                        : booking.status === 'REJECTED'
+                          ? 'bg-danger'
+                          : booking.status === 'PENDING'
+                            ? 'bg-warning'
+                            : 'bg-secondary'
+                    }`}
+                  >
+                    {booking.status}
+                  </span>
+                </td>
+                <td>
                   <div className="btn-group flex-btn-group-container">
+                    {booking.status === 'PENDING' && (
+                      <>
+                        <Button
+                          color="success"
+                          size="sm"
+                          onClick={() => handleApproveBooking(booking.id)}
+                          disabled={loading}
+                          data-cy="entityApproveButton"
+                        >
+                          <Translate contentKey="entity.action.approve">Approve</Translate>
+                        </Button>
+                        <Button
+                          color="danger"
+                          size="sm"
+                          onClick={() => handleRejectBooking(booking.id)}
+                          disabled={loading}
+                          data-cy="entityRejectButton"
+                        >
+                          <Translate contentKey="entity.action.reject">Reject</Translate>
+                        </Button>
+                      </>
+                    )}
                     <Button tag={Link} to={`/booking/${booking.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                       <Translate contentKey="entity.action.view">View</Translate>
                     </Button>
@@ -121,6 +208,7 @@ const ManageBookings = () => {
                       onClick={() => (window.location.href = `/booking/${booking.id}/delete`)}
                       color="danger"
                       size="sm"
+                      disabled={loading}
                       data-cy="entityDeleteButton"
                     >
                       <Translate contentKey="entity.action.delete">Delete</Translate>

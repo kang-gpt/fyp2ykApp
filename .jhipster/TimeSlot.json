@@ -1,5 +1,7 @@
 {
-  "annotations": {},
+  "annotations": {
+    "changelogDate": "20251103160441"
+  },
   "applications": "*",
   "dto": "mapstruct",
   "fields": [
@@ -17,13 +19,6 @@
   "name": "TimeSlot",
   "relationships": [
     {
-      "otherEntityName": "booking",
-      "otherEntityRelationshipName": "timeSlot",
-      "relationshipName": "booking",
-      "relationshipSide": "left",
-      "relationshipType": "one-to-one"
-    },
-    {
       "otherEntityName": "court",
       "otherEntityRelationshipName": "timeSlot",
       "relationshipName": "court",
@@ -31,5 +26,6 @@
       "relationshipType": "many-to-one"
     }
   ],
+  "searchEngine": "no",
   "service": "serviceClass"
 }

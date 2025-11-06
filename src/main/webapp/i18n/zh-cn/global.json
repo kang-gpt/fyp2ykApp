@@ -8,7 +8,9 @@
       "entities": {
         "main": "数据",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
-        "client": "Client"
+        "client": "Client",
+        "booking": "Booking",
+        "timeSlot": "Time Slot"
       },
       "account": {
         "main": "账号",
@@ -27,6 +29,7 @@
         "health": "服务状态",
         "configuration": "配置",
         "logs": "日志",
+        "manageBookings": "管理预订",
         "apidocs": "API",
         "database": "数据库",
         "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)",

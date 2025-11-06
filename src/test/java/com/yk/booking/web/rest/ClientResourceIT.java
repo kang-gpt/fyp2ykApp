@@ -79,7 +79,7 @@ class ClientResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Client createEntity() {
-        return new Client().name(DEFAULT_NAME).description(DEFAULT_DESCRIPTION).age(DEFAULT_AGE).dob(DEFAULT_DOB).tier(DEFAULT_TIER);
+        return new Client().name(DEFAULT_NAME).description(DEFAULT_DESCRIPTION).age(DEFAULT_AGE).dob(DEFAULT_DOB);
     }
 
     /**
@@ -89,7 +89,7 @@ class ClientResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Client createUpdatedEntity() {
-        return new Client().name(UPDATED_NAME).description(UPDATED_DESCRIPTION).age(UPDATED_AGE).dob(UPDATED_DOB).tier(UPDATED_TIER);
+        return new Client().name(UPDATED_NAME).description(UPDATED_DESCRIPTION).age(UPDATED_AGE).dob(UPDATED_DOB);
     }
 
     @BeforeEach
@@ -201,7 +201,7 @@ class ClientResourceIT {
         Client updatedClient = clientRepository.findById(client.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedClient are not directly saved in db
         em.detach(updatedClient);
-        updatedClient.name(UPDATED_NAME).description(UPDATED_DESCRIPTION).age(UPDATED_AGE).dob(UPDATED_DOB).tier(UPDATED_TIER);
+        updatedClient.name(UPDATED_NAME).description(UPDATED_DESCRIPTION).age(UPDATED_AGE).dob(UPDATED_DOB);
 
         restClientMockMvc
             .perform(
@@ -303,7 +303,7 @@ class ClientResourceIT {
         Client partialUpdatedClient = new Client();
         partialUpdatedClient.setId(client.getId());
 
-        partialUpdatedClient.name(UPDATED_NAME).description(UPDATED_DESCRIPTION).age(UPDATED_AGE).dob(UPDATED_DOB).tier(UPDATED_TIER);
+        partialUpdatedClient.name(UPDATED_NAME).description(UPDATED_DESCRIPTION).age(UPDATED_AGE).dob(UPDATED_DOB);
 
         restClientMockMvc
             .perform(

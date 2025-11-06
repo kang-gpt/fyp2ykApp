@@ -51,7 +51,7 @@ public class ClientAsserts {
             .satisfies(a -> assertThat(a.getDescription()).as("check description").isEqualTo(expected.getDescription()))
             .satisfies(a -> assertThat(a.getAge()).as("check age").isEqualTo(expected.getAge()))
             .satisfies(a -> assertThat(a.getDob()).as("check dob").isEqualTo(expected.getDob()))
-            .satisfies(a -> assertThat(a.getTier()).as("check tier").isEqualTo(expected.getTier()));
+            .satisfies(a -> assertThat(a.getClientTier()).as("check clientTier").isEqualTo(expected.getClientTier()));
     }
 
     /**

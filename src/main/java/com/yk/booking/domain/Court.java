@@ -31,6 +31,11 @@ public class Court implements Serializable {
         this.id = id;
     }
 
+    public Court id(Long id) {
+        this.setId(id);
+        return this;
+    }
+
     public String getName() {
         return name;
     }

@@ -1,5 +1,6 @@
 package com.yk.booking.service;
 
+import com.yk.booking.domain.Booking;
 import com.yk.booking.domain.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -28,6 +29,7 @@ public class MailService {
     private static final Logger LOG = LoggerFactory.getLogger(MailService.class);
 
     private static final String USER = "user";
+    private static final String BOOKING = "booking";
 
     private static final String BASE_URL = "baseUrl";
 
@@ -98,6 +100,38 @@ public class MailService {
         String content = templateEngine.process(templateName, context);
         String subject = messageSource.getMessage(titleKey, null, locale);
         sendEmailSync(user.getEmail(), subject, content, false, true);
+    }
+
+    @Async
+    public void sendBookingConfirmationEmail(Booking booking) {
+        LOG.debug("Sending booking confirmation email to '{}'", booking.getUser().getEmail());
+        if (booking.getUser().getEmail() == null) {
+            LOG.debug("Email doesn't exist for user '{}'", booking.getUser().getLogin());
+            return;
+        }
+        Locale locale = Locale.forLanguageTag(booking.getUser().getLangKey());
+        Context context = new Context(locale);
+        context.setVariable(BOOKING, booking);
+        context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
+        String content = templateEngine.process("mail/successBookedEmail", context);
+        String subject = messageSource.getMessage("email.booking.confirmation.title", null, locale);
+        sendEmailSync(booking.getUser().getEmail(), subject, content, false, true);
+    }
+
+    @Async
+    public void sendBookingRejectionEmail(Booking booking) {
+        LOG.debug("Sending booking rejection email to '{}'", booking.getUser().getEmail());
+        if (booking.getUser().getEmail() == null) {
+            LOG.debug("Email doesn't exist for user '{}'", booking.getUser().getLogin());
+            return;
+        }
+        Locale locale = Locale.forLanguageTag(booking.getUser().getLangKey());
+        Context context = new Context(locale);
+        context.setVariable(BOOKING, booking);
+        context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
+        String content = templateEngine.process("mail/failBookedEmail", context);
+        String subject = messageSource.getMessage("email.booking.rejection.title", null, locale);
+        sendEmailSync(booking.getUser().getEmail(), subject, content, false, true);
     }
 
     @Async

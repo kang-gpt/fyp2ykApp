@@ -26,6 +26,11 @@ public class Sport implements Serializable {
         this.id = id;
     }
 
+    public Sport id(Long id) {
+        this.setId(id);
+        return this;
+    }
+
     public String getName() {
         return name;
     }

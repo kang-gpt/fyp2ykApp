@@ -41,7 +41,6 @@ public class CacheConfiguration {
             createCache(cm, com.yk.booking.repository.UserRepository.USERS_BY_LOGIN_CACHE);
             createCache(cm, com.yk.booking.repository.UserRepository.USERS_BY_EMAIL_CACHE);
             createCache(cm, com.yk.booking.domain.Authority.class.getName());
-            createCache(cm, com.yk.booking.domain.Client.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

@@ -4,6 +4,13 @@
       "name": "Court Booking System",
       "description": "Book sports courts easily"
     },
+    "global": {
+      "menu": {
+        "admin": {
+          "manageBookings": "Manage Bookings"
+        }
+      }
+    },
     "bookingFlow": {
       "step1": {
         "title": "Select Sport",
