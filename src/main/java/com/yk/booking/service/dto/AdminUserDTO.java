@@ -3,6 +3,7 @@ package com.yk.booking.service.dto;
 import com.yk.booking.config.Constants;
 import com.yk.booking.domain.Authority;
 import com.yk.booking.domain.User;
+import com.yk.booking.domain.enumeration.ClientTier;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
@@ -51,6 +52,8 @@ public class AdminUserDTO implements Serializable {
 
     private Set<String> authorities;
 
+    private ClientTier tier;
+
     public AdminUserDTO() {
         // Empty constructor needed for Jackson.
     }
@@ -69,6 +72,7 @@ public class AdminUserDTO implements Serializable {
         this.lastModifiedBy = user.getLastModifiedBy();
         this.lastModifiedDate = user.getLastModifiedDate();
         this.authorities = user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toSet());
+        this.tier = user.getTier();
     }
 
     public Long getId() {
@@ -173,6 +177,14 @@ public class AdminUserDTO implements Serializable {
 
     public void setAuthorities(Set<String> authorities) {
         this.authorities = authorities;
+    }
+
+    public ClientTier getTier() {
+        return tier;
+    }
+
+    public void setTier(ClientTier tier) {
+        this.tier = tier;
     }
 
     // prettier-ignore

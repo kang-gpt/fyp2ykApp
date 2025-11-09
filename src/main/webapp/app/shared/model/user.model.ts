@@ -1,3 +1,5 @@
+import { ClientTier } from './enumerations/client-tier.model';
+
 export interface IUser {
   id?: any;
   login?: string;
@@ -12,6 +14,7 @@ export interface IUser {
   lastModifiedBy?: string;
   lastModifiedDate?: Date | null;
   password?: string;
+  tier?: ClientTier | null;
 }
 
 export const defaultValue: Readonly<IUser> = {

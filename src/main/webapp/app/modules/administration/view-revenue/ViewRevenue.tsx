@@ -1,48 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
-const dailyData = [
-  { name: 'Mon', revenue: 4000 },
-  { name: 'Tue', revenue: 3000 },
-  { name: 'Wed', revenue: 2000 },
-  { name: 'Thu', revenue: 2780 },
-  { name: 'Fri', revenue: 1890 },
-  { name: 'Sat', revenue: 2390 },
-  { name: 'Sun', revenue: 3490 },
-];
-
-const weeklyData = [
-  { name: 'Week 1', revenue: 15000 },
-  { name: 'Week 2', revenue: 20000 },
-  { name: 'Week 3', revenue: 18000 },
-  { name: 'Week 4', revenue: 22000 },
-];
-
-const monthlyData = [
-  { name: 'Jan', revenue: 80000 },
-  { name: 'Feb', revenue: 90000 },
-  { name: 'Mar', revenue: 75000 },
-  { name: 'Apr', revenue: 110000 },
-  { name: 'May', revenue: 95000 },
-  { name: 'Jun', revenue: 120000 },
-];
+import axios from 'axios';
 
 const ViewRevenue = () => {
   const [period, setPeriod] = useState('daily');
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const getData = () => {
-    switch (period) {
-      case 'weekly':
-        return weeklyData;
-      case 'monthly':
-        return monthlyData;
-      case 'daily':
-      default:
-        return dailyData;
-    }
-  };
+  useEffect(() => {
+    const fetchRevenue = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(`/api/revenue?period=${period}`);
+        setData(response.data);
+        setError(null);
+      } catch (err) {
+        setError('Failed to fetch revenue data.');
+        setData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const data = getData();
+    fetchRevenue();
+  }, [period]);
+
   const totalRevenue = data.reduce((acc, item) => acc + item.revenue, 0);
 
   return (
@@ -67,6 +50,9 @@ const ViewRevenue = () => {
           Monthly
         </button>
       </div>
+
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-danger">{error}</p>}
 
       <div className="card bg-light p-3 mb-4">
         <h4>Total Revenue ({period})</h4>

@@ -2,6 +2,7 @@ package com.yk.booking.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yk.booking.config.Constants;
+import com.yk.booking.domain.enumeration.ClientTier;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -77,6 +78,10 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
 
     @Column(name = "reset_date")
     private Instant resetDate = null;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tier", length = 20)
+    private ClientTier tier;
 
     @JsonIgnore
     @ManyToMany
@@ -191,6 +196,14 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
 
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    public ClientTier getTier() {
+        return tier;
+    }
+
+    public void setTier(ClientTier tier) {
+        this.tier = tier;
     }
 
     @Override

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Badge, Button, Table } from 'reactstrap';
+import { Badge, Button, Table, Input } from 'reactstrap';
 import { JhiItemCount, JhiPagination, TextFormat, Translate, getPaginationState } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons';
@@ -10,6 +10,7 @@ import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.cons
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getUsersAsAdmin, updateUser } from './user-management.reducer';
+import { ClientTier } from 'app/shared/model/enumerations/client-tier.model';
 
 export const UserManagement = () => {
   const dispatch = useAppDispatch();
@@ -80,6 +81,15 @@ export const UserManagement = () => {
     );
   };
 
+  const handleTierChange = (user, newTier) => {
+    dispatch(
+      updateUser({
+        ...user,
+        tier: newTier || null,
+      }),
+    );
+  };
+
   const account = useAppSelector(state => state.authentication.account);
   const users = useAppSelector(state => state.userManagement.users);
   const totalItems = useAppSelector(state => state.userManagement.totalItems);
@@ -127,6 +137,7 @@ export const UserManagement = () => {
             <th>
               <Translate contentKey="userManagement.profiles">Profiles</Translate>
             </th>
+            <th>Tier</th>
             <th className="hand" onClick={sort('createdDate')}>
               <Translate contentKey="userManagement.createdDate">Created Date</Translate>{' '}
               <FontAwesomeIcon icon={getSortIconByFieldName('createdDate')} />
@@ -172,6 +183,22 @@ export const UserManagement = () => {
                       </div>
                     ))
                   : null}
+              </td>
+              <td>
+                <Input
+                  type="select"
+                  name="tier"
+                  value={user.tier || ''}
+                  onChange={e => handleTierChange(user, e.target.value as ClientTier)}
+                  disabled={loading}
+                  className="w-55"
+                >
+                  <option value="">None</option>
+                  <option value={ClientTier.LEAD}>Lead</option>
+                  <option value={ClientTier.IRON}>Iron</option>
+                  <option value={ClientTier.GOLD}>Gold</option>
+                  <option value={ClientTier.PLATINUM}>Platinum</option>
+                </Input>
               </td>
               <td>
                 {user.createdDate ? <TextFormat value={user.createdDate} type="date" format={APP_DATE_FORMAT} blankOnInvalid /> : null}
