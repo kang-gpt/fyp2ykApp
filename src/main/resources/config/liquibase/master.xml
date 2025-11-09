@@ -16,14 +16,22 @@
     <include file="config/liquibase/changelog/20251008100000_added_entity_Sport.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251008110000_added_entity_Court.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251008120000_added_entity_Booking.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251029000000_added_fake_data.xml" relativeToChangelogFile="false"/>
     <!-- Commented out because status column already exists in database -->
     <!-- <include file="config/liquibase/changelog/20251103233000_added_status_to_booking.xml" relativeToChangelogFile="false"/> -->
-    <include file="config/liquibase/changelog/20251104000000_add_user_to_client.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251103160438_added_entity_Booking.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251103160439_added_entity_Court.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251103160440_added_entity_Sport.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251103160441_added_entity_TimeSlot.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251104000000_add_user_to_client.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251104073117_added_entity_ClientTier.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251104073118_added_entity_Payment.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
+    <include file="config/liquibase/changelog/20250908155734_added_entity_constraints_Client.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251103160438_added_entity_constraints_Booking.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251103160439_added_entity_constraints_Court.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251103160441_added_entity_constraints_TimeSlot.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251104073118_added_entity_constraints_Payment.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>
