@@ -27,11 +27,12 @@ const TimeSlot: React.FC<TimeSlotProps> = ({ courtId, sportId }) => {
 
   const sportEntity = useAppSelector(state => state.sport.entity as ISport);
   const user = useAppSelector(state => state.authentication.account as IUser);
+  const updateSuccess = useAppSelector(state => state.booking.updateSuccess);
 
   const [dates, setDates] = useState<{ label: string; date: Date }[]>([]);
   const [timeSlots, setTimeSlots] = useState<{ slot: string; display: string }[]>([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [bookings, setBookings] = useState<any[]>([]);
+  const [approvedBookings, setApprovedBookings] = useState<any[]>([]);
   const [slotsToBook, setSlotsToBook] = useState<string[]>([]);
 
   // ✅ Fetch sport info
@@ -58,14 +59,40 @@ const TimeSlot: React.FC<TimeSlotProps> = ({ courtId, sportId }) => {
     setTimeSlots(newTimeSlots);
   }, []);
 
+  // ✅ Fetch booked (approved) time slots from backend for the selected court and date
+  useEffect(() => {
+    const fetchBookedTimeSlots = async () => {
+      try {
+        const dateString = selectedDate.toISOString().split('T')[0];
+        const response = await axios.get(`/api/time-slots/by-court-and-date`, {
+          params: {
+            courtId: courtId,
+            date: dateString,
+          },
+        });
+
+        // These are the time slots that are already booked (approved bookings)
+        setApprovedBookings(response.data || []);
+      } catch (error) {
+        console.error('Error fetching booked time slots:', error);
+        setApprovedBookings([]);
+      }
+    };
+
+    if (courtId && selectedDate) {
+      fetchBookedTimeSlots();
+    }
+  }, [courtId, selectedDate, updateSuccess]);
+
   // ✅ Handle selecting time slots
   const handleSlotClick = (slot: string) => {
-    const isBooked = bookings.some(booking => {
-      const bookingStartTime = new Date(booking.startTime).toTimeString().substring(0, 5);
+    // Check if this time slot is already booked (approved)
+    const isBooked = approvedBookings.some(timeSlot => {
+      const bookingStartTime = dayjs(timeSlot.startTime).format('HH:mm');
       return bookingStartTime === slot;
     });
 
-    if (isBooked) return;
+    if (isBooked) return; // Don't allow selecting booked slots
 
     const dateString = selectedDate.toISOString().split('T')[0];
     const bookingId = `${dateString} ${slot}`;
@@ -157,8 +184,9 @@ const TimeSlot: React.FC<TimeSlotProps> = ({ courtId, sportId }) => {
         </thead>
         <tbody>
           {timeSlots.map(({ slot, display }) => {
-            const isBooked = bookings.some(b => {
-              const start = new Date(b.startTime).toTimeString().substring(0, 5);
+            // Check if this specific time slot is booked (in approvedBookings from backend)
+            const isBooked = approvedBookings.some(timeSlot => {
+              const start = dayjs(timeSlot.startTime).format('HH:mm');
               return start === slot;
             });
             const dateString = selectedDate.toISOString().split('T')[0];
@@ -166,9 +194,10 @@ const TimeSlot: React.FC<TimeSlotProps> = ({ courtId, sportId }) => {
             const isSelected = slotsToBook.includes(bookingId);
 
             const rowClass = isBooked ? 'table-danger' : isSelected ? 'table-warning' : 'table-success';
+            const cursorStyle = isBooked ? 'not-allowed' : 'pointer';
 
             return (
-              <tr key={slot} className={rowClass} onClick={() => handleSlotClick(slot)}>
+              <tr key={slot} className={rowClass} onClick={() => handleSlotClick(slot)} style={{ cursor: cursorStyle }}>
                 <td>{display}</td>
                 <td>{isBooked ? 'Booked' : isSelected ? 'Selected' : 'Available'}</td>
               </tr>

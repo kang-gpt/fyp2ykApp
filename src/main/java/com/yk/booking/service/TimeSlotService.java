@@ -1,9 +1,14 @@
 package com.yk.booking.service;
 
+import com.yk.booking.domain.Booking;
 import com.yk.booking.domain.TimeSlot;
+import com.yk.booking.repository.BookingRepository;
 import com.yk.booking.repository.TimeSlotRepository;
 import com.yk.booking.service.dto.TimeSlotDTO;
 import com.yk.booking.service.mapper.TimeSlotMapper;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -27,9 +32,12 @@ public class TimeSlotService {
 
     private final TimeSlotMapper timeSlotMapper;
 
-    public TimeSlotService(TimeSlotRepository timeSlotRepository, TimeSlotMapper timeSlotMapper) {
+    private final BookingRepository bookingRepository;
+
+    public TimeSlotService(TimeSlotRepository timeSlotRepository, TimeSlotMapper timeSlotMapper, BookingRepository bookingRepository) {
         this.timeSlotRepository = timeSlotRepository;
         this.timeSlotMapper = timeSlotMapper;
+        this.bookingRepository = bookingRepository;
     }
 
     /**
@@ -122,5 +130,41 @@ public class TimeSlotService {
     public void delete(Long id) {
         LOG.debug("Request to delete TimeSlot : {}", id);
         timeSlotRepository.deleteById(id);
+    }
+
+    /**
+     * Get time slots for a specific court and date.
+     *
+     * @param courtId the id of the court.
+     * @param dateStr the date in YYYY-MM-DD format.
+     * @return the list of time slots with booking status.
+     */
+    @Transactional(readOnly = true)
+    public List<TimeSlotDTO> findByCourtAndDate(Long courtId, String dateStr) {
+        LOG.debug("Request to get TimeSlots for court {} on date {}", courtId, dateStr);
+
+        // Parse the date
+        LocalDate date = LocalDate.parse(dateStr);
+        Instant startOfDay = date.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        Instant endOfDay = date.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant();
+
+        // Get all bookings for this court and date
+        List<Booking> bookings = bookingRepository
+            .findAll()
+            .stream()
+            .filter(
+                booking ->
+                    booking.getTimeSlot() != null &&
+                    booking.getTimeSlot().getCourt() != null &&
+                    booking.getTimeSlot().getCourt().getId().equals(courtId) &&
+                    booking.getBookingDate() != null &&
+                    !booking.getBookingDate().isBefore(startOfDay) &&
+                    booking.getBookingDate().isBefore(endOfDay) &&
+                    "APPROVED".equals(booking.getStatus().name())
+            )
+            .collect(Collectors.toList());
+
+        // Get all time slots for approved bookings
+        return bookings.stream().map(Booking::getTimeSlot).map(timeSlotMapper::toDto).collect(Collectors.toList());
     }
 }

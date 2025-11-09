@@ -173,4 +173,21 @@ public class TimeSlotResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
+
+    /**
+     * {@code GET  /time-slots/by-court-and-date} : get time slots for a specific court and date.
+     *
+     * @param courtId the id of the court.
+     * @param date the date in YYYY-MM-DD format.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of timeSlots in body.
+     */
+    @GetMapping("/by-court-and-date")
+    public ResponseEntity<List<TimeSlotDTO>> getTimeSlotsByCourtAndDate(
+        @RequestParam("courtId") Long courtId,
+        @RequestParam("date") String date
+    ) {
+        LOG.debug("REST request to get TimeSlots for court {} on date {}", courtId, date);
+        List<TimeSlotDTO> timeSlots = timeSlotService.findByCourtAndDate(courtId, date);
+        return ResponseEntity.ok(timeSlots);
+    }
 }
