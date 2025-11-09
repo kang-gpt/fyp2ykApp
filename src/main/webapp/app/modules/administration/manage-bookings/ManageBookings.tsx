@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo } from 'react';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getEntities, approveBooking, rejectBooking } from 'app/entities/booking/booking.reducer';
-import { updatePaymentStatus } from 'app/entities/payment/payment.reducer';
 
-import { Table, Button, Input } from 'reactstrap';
+import { Table, Button } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { Translate } from 'react-jhipster';
 import dayjs from 'dayjs';
@@ -18,11 +17,7 @@ interface GroupedBooking {
   courtId: string;
   courtName: string;
   bookingDate: string;
-  totalHours: number;
-  timeSlots: string[];
   status: string;
-  paymentStatus: string;
-  paymentId?: number;
 }
 
 const ManageBookings = () => {
@@ -53,45 +48,21 @@ const ManageBookings = () => {
         groups[groupKey] = {
           groupKey,
           bookings: [],
-          user: booking.user?.firstName && booking.user?.lastName ? `${booking.user.firstName} ${booking.user.lastName}` : 'N/A',
+          user: booking.user?.login || 'N/A',
           userLogin: booking.user?.login || 'N/A',
-          sport: booking.timeSlot?.court?.sport?.id?.toString() || 'N/A',
+          sport: booking.timeSlot?.court?.sport?.name || 'N/A',
           courtId: booking.timeSlot?.court?.id?.toString() || 'N/A',
           courtName: booking.timeSlot?.court?.name || 'N/A',
           bookingDate: dateStr,
-          totalHours: 0,
-          timeSlots: [],
           status: booking.status || 'UNKNOWN',
-          paymentStatus: booking.payment?.status || 'No Payment',
-          paymentId: booking.payment?.id,
         };
       }
 
       groups[groupKey].bookings.push(booking);
-
-      // Calculate hours
-      if (booking.timeSlot?.startTime && booking.timeSlot?.endTime) {
-        const start = dayjs(booking.timeSlot.startTime);
-        const end = dayjs(booking.timeSlot.endTime);
-        const hours = end.diff(start, 'hour', true);
-        groups[groupKey].totalHours += hours;
-
-        // Format time slot
-        const timeSlotStr = `${start.format('HH:mm')}-${end.format('HH:mm')}`;
-        groups[groupKey].timeSlots.push(timeSlotStr);
-      }
     });
 
     return Object.values(groups);
   }, [bookings]);
-
-  const handleRejectBooking = (id: number) => {
-    dispatch(rejectBooking(id));
-  };
-
-  const handlePaymentStatusChange = (id: number, status: string) => {
-    dispatch(updatePaymentStatus({ id, status }));
-  };
 
   return (
     <div>
@@ -117,9 +88,6 @@ const ManageBookings = () => {
               <th>Sport</th>
               <th>Court</th>
               <th>Date</th>
-              <th>Time Slots</th>
-              <th>Total Hours</th>
-              <th>Payment Status</th>
               <th>Booking Status</th>
               <th>Actions</th>
             </tr>
@@ -135,51 +103,10 @@ const ManageBookings = () => {
                     </span>
                   ))}
                 </td>
-                <td>
-                  <div>
-                    <strong>{group.user}</strong>
-                    <br />
-                    <small className="text-muted">@{group.userLogin}</small>
-                  </div>
-                </td>
+                <td>@{group.userLogin}</td>
                 <td>{group.sport}</td>
                 <td>{group.courtName}</td>
                 <td>{dayjs(group.bookingDate).format('MMM DD, YYYY')}</td>
-                <td>
-                  {group.timeSlots.map((slot, idx) => (
-                    <div key={idx}>
-                      <span className="badge bg-info me-1">{slot}</span>
-                    </div>
-                  ))}
-                </td>
-                <td>
-                  <strong>{group.totalHours.toFixed(1)}</strong> hours
-                </td>
-                <td>
-                  {group.paymentId ? (
-                    <Input
-                      type="select"
-                      name="paymentStatus"
-                      id={`paymentStatus-${group.paymentId}`}
-                      value={group.paymentStatus}
-                      onChange={e => handlePaymentStatusChange(group.paymentId!, e.target.value)}
-                      disabled={loading}
-                      className={
-                        group.paymentStatus === 'Completed'
-                          ? 'text-success fw-bold'
-                          : group.paymentStatus === 'Failed'
-                            ? 'text-danger fw-bold'
-                            : 'text-warning fw-bold'
-                      }
-                    >
-                      <option value="Pending">⏳ Pending</option>
-                      <option value="Completed">✓ Completed</option>
-                      <option value="Failed">✗ Failed</option>
-                    </Input>
-                  ) : (
-                    <span className="badge bg-secondary">No Payment</span>
-                  )}
-                </td>
                 <td>
                   <span
                     className={`badge ${
