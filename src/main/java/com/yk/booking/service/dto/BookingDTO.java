@@ -22,6 +22,10 @@ public class BookingDTO implements Serializable {
 
     private TimeSlotDTO timeSlot;
 
+    private UserDTO user;
+
+    private PaymentDTO payment;
+
     public Long getId() {
         return id;
     }
@@ -54,6 +58,22 @@ public class BookingDTO implements Serializable {
         this.timeSlot = timeSlot;
     }
 
+    public UserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
+    }
+
+    public PaymentDTO getPayment() {
+        return payment;
+    }
+
+    public void setPayment(PaymentDTO payment) {
+        this.payment = payment;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -83,6 +103,8 @@ public class BookingDTO implements Serializable {
             ", bookingDate='" + getBookingDate() + "'" +
             ", status='" + getStatus() + "'" +
             ", timeSlot=" + getTimeSlot() +
+            ", user=" + getUser() +
+            ", payment=" + getPayment() +
             "}";
     }
 }

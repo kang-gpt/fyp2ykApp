@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Fix booking table schema - remove old start_time and end_time columns
+    -->
+    <changeSet id="20251109000000-1" author="jhipster">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="booking" columnName="start_time"/>
+        </preConditions>
+        <dropColumn tableName="booking" columnName="start_time"/>
+    </changeSet>
+
+    <changeSet id="20251109000000-2" author="jhipster">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="booking" columnName="end_time"/>
+        </preConditions>
+        <dropColumn tableName="booking" columnName="end_time"/>
+    </changeSet>
+
+    <changeSet id="20251109000000-3" author="jhipster">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="booking" columnName="court_id"/>
+        </preConditions>
+        <dropForeignKeyConstraint baseTableName="booking" constraintName="fk_booking__court_id"/>
+        <dropColumn tableName="booking" columnName="court_id"/>
+    </changeSet>
+
+    <changeSet id="20251109000000-4" author="jhipster">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="booking" columnName="booking_date"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="booking">
+            <column name="booking_date" type="datetime(6)">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20251109000000-5" author="jhipster">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="booking" columnName="status"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="booking">
+            <column name="status" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20251109000000-6" author="jhipster">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="booking" columnName="time_slot_id"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="booking">
+            <column name="time_slot_id" type="bigint">
+                <constraints nullable="true" unique="true" uniqueConstraintName="ux_booking__time_slot_id" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20251109000000-7" author="jhipster">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="booking" columnName="payment_id"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="booking">
+            <column name="payment_id" type="bigint">
+                <constraints nullable="true" unique="true" uniqueConstraintName="ux_booking__payment_id" />
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

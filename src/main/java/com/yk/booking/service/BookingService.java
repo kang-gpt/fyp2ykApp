@@ -1,8 +1,14 @@
 package com.yk.booking.service;
 
 import com.yk.booking.domain.Booking;
+import com.yk.booking.domain.Court;
+import com.yk.booking.domain.TimeSlot;
+import com.yk.booking.domain.User;
 import com.yk.booking.domain.enumeration.BookingStatus;
 import com.yk.booking.repository.BookingRepository;
+import com.yk.booking.repository.CourtRepository;
+import com.yk.booking.repository.TimeSlotRepository;
+import com.yk.booking.repository.UserRepository;
 import com.yk.booking.service.dto.BookingDTO;
 import com.yk.booking.service.mapper.BookingMapper;
 import java.util.LinkedList;
@@ -11,6 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,9 +34,25 @@ public class BookingService {
 
     private final BookingMapper bookingMapper;
 
-    public BookingService(BookingRepository bookingRepository, BookingMapper bookingMapper) {
+    private final TimeSlotRepository timeSlotRepository;
+
+    private final CourtRepository courtRepository;
+
+    private final UserRepository userRepository;
+
+    @Autowired
+    public BookingService(
+        BookingRepository bookingRepository,
+        BookingMapper bookingMapper,
+        TimeSlotRepository timeSlotRepository,
+        CourtRepository courtRepository,
+        UserRepository userRepository
+    ) {
         this.bookingRepository = bookingRepository;
         this.bookingMapper = bookingMapper;
+        this.timeSlotRepository = timeSlotRepository;
+        this.courtRepository = courtRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -41,6 +64,32 @@ public class BookingService {
     public BookingDTO save(BookingDTO bookingDTO) {
         LOG.debug("Request to save Booking : {}", bookingDTO);
         Booking booking = bookingMapper.toEntity(bookingDTO);
+
+        // Handle User reference
+        if (bookingDTO.getUser() != null && bookingDTO.getUser().getId() != null) {
+            User user = userRepository.findById(bookingDTO.getUser().getId()).orElseThrow(() -> new RuntimeException("User not found"));
+            booking.setUser(user);
+        }
+
+        // Handle TimeSlot creation if provided
+        if (bookingDTO.getTimeSlot() != null) {
+            TimeSlot timeSlot = new TimeSlot();
+            timeSlot.setStartTime(bookingDTO.getTimeSlot().getStartTime());
+            timeSlot.setEndTime(bookingDTO.getTimeSlot().getEndTime());
+
+            // Handle Court reference
+            if (bookingDTO.getTimeSlot().getCourt() != null && bookingDTO.getTimeSlot().getCourt().getId() != null) {
+                Court court = courtRepository
+                    .findById(bookingDTO.getTimeSlot().getCourt().getId())
+                    .orElseThrow(() -> new RuntimeException("Court not found"));
+                timeSlot.setCourt(court);
+            }
+
+            // Save the TimeSlot first
+            timeSlot = timeSlotRepository.save(timeSlot);
+            booking.setTimeSlot(timeSlot);
+        }
+
         booking = bookingRepository.save(booking);
         return bookingMapper.toDto(booking);
     }
