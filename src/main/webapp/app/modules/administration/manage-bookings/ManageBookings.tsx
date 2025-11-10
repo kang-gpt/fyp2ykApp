@@ -18,6 +18,7 @@ interface GroupedBooking {
   courtName: string;
   bookingDate: string;
   status: string;
+  timeRanges: string[];
 }
 
 const ManageBookings = () => {
@@ -30,6 +31,20 @@ const ManageBookings = () => {
   useEffect(() => {
     dispatch(getEntities({}));
   }, [dispatch, updateSuccess]);
+
+  // Handle approval of all bookings in a group
+  const handleGroupApproval = (group: GroupedBooking) => {
+    group.bookings.forEach(booking => {
+      dispatch(approveBooking(booking.id));
+    });
+  };
+
+  // Handle rejection of all bookings in a group
+  const handleGroupRejection = (group: GroupedBooking) => {
+    group.bookings.forEach(booking => {
+      dispatch(rejectBooking(booking.id));
+    });
+  };
 
   // Group bookings by user, court, and date
   const groupedBookings = useMemo(() => {
@@ -55,10 +70,17 @@ const ManageBookings = () => {
           courtName: booking.timeSlot?.court?.name || 'N/A',
           bookingDate: dateStr,
           status: booking.status || 'UNKNOWN',
+          timeRanges: [],
         };
       }
 
       groups[groupKey].bookings.push(booking);
+
+      // Add time range for this booking
+      if (booking.timeSlot?.startTime && booking.timeSlot?.endTime) {
+        const timeRange = `${dayjs(booking.timeSlot.startTime).format('HH:mm')} - ${dayjs(booking.timeSlot.endTime).format('HH:mm')}`;
+        groups[groupKey].timeRanges.push(timeRange);
+      }
     });
 
     return Object.values(groups);
@@ -86,8 +108,10 @@ const ManageBookings = () => {
               <th>Booking IDs</th>
               <th>User</th>
               <th>Sport</th>
-              <th>Court</th>
+              <th>Court ID</th>
+              <th>Court Name</th>
               <th>Date</th>
+              <th>Time Slots</th>
               <th>Booking Status</th>
               <th>Actions</th>
             </tr>
@@ -105,8 +129,20 @@ const ManageBookings = () => {
                 </td>
                 <td>@{group.userLogin}</td>
                 <td>{group.sport}</td>
+                <td>{group.courtId}</td>
                 <td>{group.courtName}</td>
                 <td>{dayjs(group.bookingDate).format('MMM DD, YYYY')}</td>
+                <td>
+                  {group.timeRanges.length > 0 ? (
+                    <div>
+                      {group.timeRanges.map((timeRange, idx) => (
+                        <div key={idx}>{timeRange}</div>
+                      ))}
+                    </div>
+                  ) : (
+                    'N/A'
+                  )}
+                </td>
                 <td>
                   <span
                     className={`badge ${
@@ -123,30 +159,32 @@ const ManageBookings = () => {
                   </span>
                 </td>
                 <td>
-                  <div className="d-flex flex-column gap-1">
-                    {group.status === 'PENDING' &&
-                      group.bookings.map(booking => (
-                        <div key={booking.id} className="btn-group btn-group-sm">
-                          <Button
-                            color="success"
-                            size="sm"
-                            onClick={() => dispatch(approveBooking(booking.id))}
-                            disabled={loading}
-                            title={`Approve booking ${booking.id}`}
-                          >
-                            ✓ #{booking.id}
-                          </Button>
-                          <Button
-                            color="danger"
-                            size="sm"
-                            onClick={() => dispatch(rejectBooking(booking.id))}
-                            disabled={loading}
-                            title={`Reject booking ${booking.id}`}
-                          >
-                            ✗
-                          </Button>
-                        </div>
-                      ))}
+                  <div className="d-flex flex-column gap-2">
+                    {/* Single Approve/Reject for the entire group */}
+                    {group.status === 'PENDING' && (
+                      <div className="btn-group btn-group-sm">
+                        <Button
+                          color="success"
+                          size="sm"
+                          onClick={() => handleGroupApproval(group)}
+                          disabled={loading}
+                          title={`Approve all ${group.bookings.length} booking(s)`}
+                        >
+                          ✓ Approve All ({group.bookings.length})
+                        </Button>
+                        <Button
+                          color="danger"
+                          size="sm"
+                          onClick={() => handleGroupRejection(group)}
+                          disabled={loading}
+                          title={`Reject all ${group.bookings.length} booking(s)`}
+                        >
+                          ✗ Reject All
+                        </Button>
+                      </div>
+                    )}
+
+                    {/* View/Edit/Delete buttons for individual bookings */}
                     {group.bookings.map(booking => (
                       <div key={`actions-${booking.id}`} className="btn-group btn-group-sm">
                         <Button tag={Link} to={`/booking/${booking.id}`} color="info" size="sm" title={`View booking ${booking.id}`}>

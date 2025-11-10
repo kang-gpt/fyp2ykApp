@@ -40,19 +40,23 @@ public class BookingService {
 
     private final UserRepository userRepository;
 
+    private final MailService mailService;
+
     @Autowired
     public BookingService(
         BookingRepository bookingRepository,
         BookingMapper bookingMapper,
         TimeSlotRepository timeSlotRepository,
         CourtRepository courtRepository,
-        UserRepository userRepository
+        UserRepository userRepository,
+        MailService mailService
     ) {
         this.bookingRepository = bookingRepository;
         this.bookingMapper = bookingMapper;
         this.timeSlotRepository = timeSlotRepository;
         this.courtRepository = courtRepository;
         this.userRepository = userRepository;
+        this.mailService = mailService;
     }
 
     /**
@@ -165,6 +169,11 @@ public class BookingService {
                 return booking;
             })
             .map(bookingRepository::save)
+            .map(booking -> {
+                // Send confirmation email after successful approval
+                mailService.sendBookingConfirmationEmail(booking);
+                return booking;
+            })
             .map(bookingMapper::toDto);
     }
 
@@ -183,6 +192,11 @@ public class BookingService {
                 return booking;
             })
             .map(bookingRepository::save)
+            .map(booking -> {
+                // Send rejection email after successful rejection
+                mailService.sendBookingRejectionEmail(booking);
+                return booking;
+            })
             .map(bookingMapper::toDto);
     }
 
