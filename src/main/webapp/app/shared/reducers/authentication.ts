@@ -26,12 +26,16 @@ export type AuthenticationState = Readonly<typeof initialState>;
 // Actions
 
 export const getSession = (): AppThunk => async (dispatch, getState) => {
-  await dispatch(getAccount());
+  // Only fetch account if we have an auth token
+  const token = Storage.local.get(AUTH_TOKEN_KEY) || Storage.session.get(AUTH_TOKEN_KEY);
+  if (token) {
+    await dispatch(getAccount());
 
-  const { account } = getState().authentication;
-  if (account && account.langKey) {
-    const langKey = Storage.session.get('locale', account.langKey);
-    await dispatch(setLocale(langKey));
+    const { account } = getState().authentication;
+    if (account && account.langKey) {
+      const langKey = Storage.session.get('locale', account.langKey);
+      await dispatch(setLocale(langKey));
+    }
   }
 };
 

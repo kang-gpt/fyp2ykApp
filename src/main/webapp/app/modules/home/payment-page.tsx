@@ -68,8 +68,44 @@ const PaymentPage = () => {
     navigate(-1);
   };
 
-  const handleDone = () => {
-    setShowMessage(true);
+  const handleDone = async () => {
+    try {
+      // Create payment records for each booked slot
+      const paymentPromises = slotsToBook.map(async slot => {
+        const [dateString, time] = slot.split(' ');
+        const bookingDate = new Date(`${dateString}T${time}`);
+
+        // Find the booking for this slot
+        const bookingsResponse = await axios.get(`/api/bookings`, {
+          params: {
+            'user.id.equals': currentUser.id,
+            'bookingDate.equals': bookingDate.toISOString(),
+            'status.equals': 'PENDING',
+          },
+        });
+
+        if (bookingsResponse.data && bookingsResponse.data.length > 0) {
+          const booking = bookingsResponse.data[0];
+
+          // Create payment for this booking
+          const payment = {
+            amount: finalPrice / slotsToBook.length, // Split total amount across all slots
+            paymentDate: new Date().toISOString(),
+            status: 'PENDING',
+            booking: { id: booking.id },
+            user: { id: currentUser.id },
+          };
+
+          await axios.post('/api/payments', payment);
+        }
+      });
+
+      await Promise.all(paymentPromises);
+      setShowMessage(true);
+    } catch (error) {
+      console.error('Error creating payment:', error);
+      alert('Failed to process payment. Please try again.');
+    }
   };
 
   const handleHome = () => {
