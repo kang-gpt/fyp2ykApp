@@ -41,6 +41,9 @@ public class Booking implements Serializable {
     @JoinColumn(unique = true)
     private Payment payment;
 
+    @Column(name = "booking_id", length = 5, unique = true)
+    private String bookingId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
@@ -57,6 +60,19 @@ public class Booking implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getBookingId() {
+        return this.bookingId;
+    }
+
+    public Booking bookingId(String bookingId) {
+        this.setBookingId(bookingId);
+        return this;
+    }
+
+    public void setBookingId(String bookingId) {
+        this.bookingId = bookingId;
     }
 
     public Instant getBookingDate() {

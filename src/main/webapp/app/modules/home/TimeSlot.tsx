@@ -35,12 +35,12 @@ const TimeSlot: React.FC<TimeSlotProps> = ({ courtId, sportId }) => {
   const [approvedBookings, setApprovedBookings] = useState<any[]>([]);
   const [slotsToBook, setSlotsToBook] = useState<string[]>([]);
 
-  // ✅ Fetch sport info
+  // Fetch sport info
   useEffect(() => {
     if (sportId) dispatch(getSport(sportId));
   }, [sportId]);
 
-  // ✅ Generate 7 days & time slots
+  // Generate 7 days & time slots
   useEffect(() => {
     const newDates = Array.from({ length: 7 }, (_, i) => {
       const date = new Date();
@@ -59,7 +59,7 @@ const TimeSlot: React.FC<TimeSlotProps> = ({ courtId, sportId }) => {
     setTimeSlots(newTimeSlots);
   }, []);
 
-  // ✅ Fetch booked (approved) time slots from backend for the selected court and date
+  // Fetch booked (approved) time slots from backend for the selected court and date
   useEffect(() => {
     const fetchBookedTimeSlots = async () => {
       try {
@@ -84,7 +84,7 @@ const TimeSlot: React.FC<TimeSlotProps> = ({ courtId, sportId }) => {
     }
   }, [courtId, selectedDate, updateSuccess]);
 
-  // ✅ Handle selecting time slots
+  // Handle selecting time slots
   const handleSlotClick = (slot: string) => {
     // Check if this time slot is already booked (approved)
     const isBooked = approvedBookings.some(timeSlot => {
@@ -100,7 +100,7 @@ const TimeSlot: React.FC<TimeSlotProps> = ({ courtId, sportId }) => {
     setSlotsToBook(prev => (prev.includes(bookingId) ? prev.filter(s => s !== bookingId) : [...prev, bookingId]));
   };
 
-  // ✅ Confirm booking or redirect to login
+  // Confirm booking or redirect to login
   const handleSelect = async () => {
     if (!user || !user.id) {
       navigate('/login', { state: { from: `/timeslot/${sportId}/${courtId}` } });

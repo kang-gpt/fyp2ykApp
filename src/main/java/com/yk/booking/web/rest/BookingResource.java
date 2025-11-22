@@ -6,8 +6,10 @@ import com.yk.booking.service.dto.BookingDTO;
 import com.yk.booking.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -199,5 +201,18 @@ public class BookingResource {
             bookingDTO,
             HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString())
         );
+    }
+
+    /**
+     * {@code GET  /bookings/total-approved-revenue-for-date} : get the total approved revenue for a specific date.
+     *
+     * @param date The date for which to retrieve the total approved revenue.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the total revenue.
+     */
+    @GetMapping("/total-approved-revenue-for-date")
+    public ResponseEntity<BigDecimal> getTotalApprovedRevenueForDate(@RequestParam("date") LocalDate date) {
+        LOG.debug("REST request to get total approved revenue for date : {}", date);
+        BigDecimal totalRevenue = bookingService.getTotalApprovedRevenueForDay(date);
+        return ResponseEntity.ok().body(totalRevenue);
     }
 }

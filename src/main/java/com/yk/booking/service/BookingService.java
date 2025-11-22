@@ -11,9 +11,14 @@ import com.yk.booking.repository.TimeSlotRepository;
 import com.yk.booking.repository.UserRepository;
 import com.yk.booking.service.dto.BookingDTO;
 import com.yk.booking.service.mapper.BookingMapper;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +46,8 @@ public class BookingService {
     private final UserRepository userRepository;
 
     private final MailService mailService;
+
+    private final Random random = new Random();
 
     @Autowired
     public BookingService(
@@ -94,6 +101,12 @@ public class BookingService {
             booking.setTimeSlot(timeSlot);
         }
 
+        String bookingId;
+        do {
+            bookingId = String.format("%05d", random.nextInt(100000));
+        } while (bookingRepository.findByBookingId(bookingId).isPresent());
+        booking.setBookingId(bookingId);
+
         booking = bookingRepository.save(booking);
         return bookingMapper.toDto(booking);
     }
@@ -107,6 +120,11 @@ public class BookingService {
     public BookingDTO update(BookingDTO bookingDTO) {
         LOG.debug("Request to update Booking : {}", bookingDTO);
         Booking booking = bookingMapper.toEntity(bookingDTO);
+
+        if (booking.getStatus() == BookingStatus.APPROVED) {
+            mailService.sendBookingConfirmationEmail(booking);
+        }
+
         booking = bookingRepository.save(booking);
         return bookingMapper.toDto(booking);
     }
@@ -170,6 +188,22 @@ public class BookingService {
             })
             .map(bookingRepository::save)
             .map(booking -> {
+                // Fetch all required relationships for email template
+                if (booking.getTimeSlot() != null) {
+                    booking.getTimeSlot().getStartTime(); // Force lazy load
+                    booking.getTimeSlot().getEndTime();
+                    if (booking.getTimeSlot().getCourt() != null) {
+                        booking.getTimeSlot().getCourt().getName(); // Force lazy load
+                        if (booking.getTimeSlot().getCourt().getSport() != null) {
+                            booking.getTimeSlot().getCourt().getSport().getName(); // Force lazy load
+                        }
+                    }
+                }
+                if (booking.getUser() != null) {
+                    booking.getUser().getEmail(); // Force lazy load
+                    booking.getUser().getLogin();
+                    booking.getUser().getLangKey();
+                }
                 // Send confirmation email after successful approval
                 mailService.sendBookingConfirmationEmail(booking);
                 return booking;
@@ -193,6 +227,22 @@ public class BookingService {
             })
             .map(bookingRepository::save)
             .map(booking -> {
+                // Fetch all required relationships for email template
+                if (booking.getTimeSlot() != null) {
+                    booking.getTimeSlot().getStartTime(); // Force lazy load
+                    booking.getTimeSlot().getEndTime();
+                    if (booking.getTimeSlot().getCourt() != null) {
+                        booking.getTimeSlot().getCourt().getName(); // Force lazy load
+                        if (booking.getTimeSlot().getCourt().getSport() != null) {
+                            booking.getTimeSlot().getCourt().getSport().getName(); // Force lazy load
+                        }
+                    }
+                }
+                if (booking.getUser() != null) {
+                    booking.getUser().getEmail(); // Force lazy load
+                    booking.getUser().getLogin();
+                    booking.getUser().getLangKey();
+                }
                 // Send rejection email after successful rejection
                 mailService.sendBookingRejectionEmail(booking);
                 return booking;
@@ -208,5 +258,28 @@ public class BookingService {
     public void delete(Long id) {
         LOG.debug("Request to delete Booking : {}", id);
         bookingRepository.deleteById(id);
+    }
+
+    /**
+     * Get total approved revenue for a specific day.
+     *
+     * @param date The LocalDate for which to calculate revenue.
+     * @return The total approved revenue for the day, or BigDecimal.ZERO if none.
+     */
+    @Transactional(readOnly = true)
+    public BigDecimal getTotalApprovedRevenueForDay(LocalDate date) {
+        LOG.debug("Request to get total approved revenue for date : {}", date);
+
+        // Define the start and end of the day in UTC
+        Instant startOfDay = date.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        Instant endOfDay = date.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant();
+
+        Optional<BigDecimal> totalRevenue = bookingRepository.findTotalRevenueByStatusAndBookingDateBetween(
+            BookingStatus.APPROVED,
+            startOfDay,
+            endOfDay
+        );
+
+        return totalRevenue.orElse(BigDecimal.ZERO);
     }
 }

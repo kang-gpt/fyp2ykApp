@@ -49,6 +49,7 @@ public interface BookingMapper extends EntityMapper<BookingDTO, Booking> {
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
     @Mapping(target = "login", source = "login")
+    @Mapping(target = "email", source = "email")
     UserDTO toDtoUserId(User user);
 
     @Named("paymentWithStatus")

@@ -105,33 +105,60 @@ public class MailService {
     @Async
     public void sendBookingConfirmationEmail(Booking booking) {
         LOG.debug("Sending booking confirmation email to '{}'", booking.getUser().getEmail());
-        if (booking.getUser().getEmail() == null) {
-            LOG.debug("Email doesn't exist for user '{}'", booking.getUser().getLogin());
+        LOG.debug("Sending booking '{}'", booking);
+        if (booking.getUser() == null) {
+            LOG.error("Cannot send booking confirmation email: User is null for booking ID '{}'", booking.getId());
             return;
         }
-        Locale locale = Locale.forLanguageTag(booking.getUser().getLangKey());
-        Context context = new Context(locale);
-        context.setVariable(BOOKING, booking);
-        context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
-        String content = templateEngine.process("mail/successBookedEmail", context);
-        String subject = messageSource.getMessage("email.booking.confirmation.title", null, locale);
-        sendEmailSync(booking.getUser().getEmail(), subject, content, false, true);
+        if (booking.getUser().getEmail() == null || booking.getUser().getEmail().trim().isEmpty()) {
+            LOG.error("Cannot send booking confirmation email: Email doesn't exist for user '{}'", booking.getUser().getLogin());
+            return;
+        }
+        try {
+            String langKey = booking.getUser().getLangKey();
+            if (langKey == null || langKey.trim().isEmpty()) {
+                langKey = "en"; // Default to English
+            }
+            Locale locale = Locale.forLanguageTag(langKey);
+            Context context = new Context(locale);
+            context.setVariable(BOOKING, booking);
+            context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
+            String content = templateEngine.process("mail/successBookedEmail", context);
+            String subject = messageSource.getMessage("email.booking.confirmation.title", null, locale);
+            sendEmailSync(booking.getUser().getEmail(), subject, content, false, true);
+            LOG.info("Booking confirmation email sent successfully to '{}'", booking.getUser().getEmail());
+        } catch (Exception e) {
+            LOG.error("Error sending booking confirmation email to '{}': {}", booking.getUser().getEmail(), e.getMessage(), e);
+        }
     }
 
     @Async
     public void sendBookingRejectionEmail(Booking booking) {
         LOG.debug("Sending booking rejection email to '{}'", booking.getUser().getEmail());
-        if (booking.getUser().getEmail() == null) {
-            LOG.debug("Email doesn't exist for user '{}'", booking.getUser().getLogin());
+        if (booking.getUser() == null) {
+            LOG.error("Cannot send booking rejection email: User is null for booking ID '{}'", booking.getId());
             return;
         }
-        Locale locale = Locale.forLanguageTag(booking.getUser().getLangKey());
-        Context context = new Context(locale);
-        context.setVariable(BOOKING, booking);
-        context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
-        String content = templateEngine.process("mail/failBookedEmail", context);
-        String subject = messageSource.getMessage("email.booking.rejection.title", null, locale);
-        sendEmailSync(booking.getUser().getEmail(), subject, content, false, true);
+        if (booking.getUser().getEmail() == null || booking.getUser().getEmail().trim().isEmpty()) {
+            LOG.error("Cannot send booking rejection email: Email doesn't exist for user '{}'", booking.getUser().getLogin());
+            return;
+        }
+        try {
+            String langKey = booking.getUser().getLangKey();
+            if (langKey == null || langKey.trim().isEmpty()) {
+                langKey = "en"; // Default to English
+            }
+            Locale locale = Locale.forLanguageTag(langKey);
+            Context context = new Context(locale);
+            context.setVariable(BOOKING, booking);
+            context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
+            String content = templateEngine.process("mail/failBookedEmail", context);
+            String subject = messageSource.getMessage("email.booking.rejection.title", null, locale);
+            sendEmailSync(booking.getUser().getEmail(), subject, content, false, true);
+            LOG.info("Booking rejection email sent successfully to '{}'", booking.getUser().getEmail());
+        } catch (Exception e) {
+            LOG.error("Error sending booking rejection email to '{}': {}", booking.getUser().getEmail(), e.getMessage(), e);
+        }
     }
 
     @Async

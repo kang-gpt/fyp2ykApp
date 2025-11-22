@@ -95,12 +95,16 @@
         </p>
 
         <div class="booking-details">
-          <p><strong>Court:</strong> <span th:text="${booking.court.name}">Court Name</span></p>
-          <p><strong>Sport:</strong> <span th:text="${booking.court.sport.name}">Sport Type</span></p>
+          <p><strong>Booking ID:</strong> <span th:text="${booking.bookingId}">Booking ID</span></p>
+          <p><strong>Court:</strong> <span th:text="${booking.timeSlot.court.name}">Court Name</span></p>
+          <p><strong>Sport:</strong> <span th:text="${booking.timeSlot.court.sport.name}">Sport Type</span></p>
           <p>
-            <strong>Start Time:</strong> <span th:text="${#temporals.format(booking.startTime, 'dd MMMM yyyy HH:mm')}">Start Time</span>
+            <strong>Start Time:</strong>
+            <span th:text="${#temporals.format(booking.timeSlot.startTime, 'dd MMMM yyyy HH:mm')}">Start Time</span>
           </p>
-          <p><strong>End Time:</strong> <span th:text="${#temporals.format(booking.endTime, 'dd MMMM yyyy HH:mm')}">End Time</span></p>
+          <p>
+            <strong>End Time:</strong> <span th:text="${#temporals.format(booking.timeSlot.endTime, 'dd MMMM yyyy HH:mm')}">End Time</span>
+          </p>
         </div>
 
         <p class="content-text" th:text="#{email.booking.confirmation.text2}">

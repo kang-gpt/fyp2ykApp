@@ -14,6 +14,8 @@ public class BookingDTO implements Serializable {
 
     private Long id;
 
+    private String bookingId;
+
     @NotNull
     private Instant bookingDate;
 
@@ -32,6 +34,14 @@ public class BookingDTO implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getBookingId() {
+        return bookingId;
+    }
+
+    public void setBookingId(String bookingId) {
+        this.bookingId = bookingId;
     }
 
     public Instant getBookingDate() {
